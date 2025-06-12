@@ -5,76 +5,76 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  # Core Python
-  - python=3.12
+  # Core Python - 3.10に変更（st310環境と同じ）
+  - python=3.10
   
-  # PyTorch and related (Python 3.12対応の最新安定版)
-  - pytorch=2.4.1
-  - torchvision=0.19.1
-  - torchaudio=2.4.1
-  - pytorch-cuda=12.4
+  # PyTorch and related - Python 3.10対応版
+  - pytorch=2.2.2
+  - torchvision=0.17.2
+  - torchaudio=2.2.2
+  - pytorch-cuda=12.1
   
   # Scientific computing
-  - numpy=2.2.*
-  - scipy=1.15.*
-  - pandas=2.2.*
-  - scikit-learn=1.6.*
-  - scikit-image=0.25.*
-  - statsmodels=0.14.*
+  - numpy
+  - scipy
+  - pandas
+  - scikit-learn
+  - scikit-image
+  - statsmodels
   
   # Visualization
-  - matplotlib=3.10.*
-  - seaborn=0.13.*
-  - bokeh=3.7.*
-  - pillow=11.2.*
+  - matplotlib
+  - seaborn
+  - bokeh
+  - pillow
   
   # Geospatial
-  - cartopy=0.24.*
-  - shapely=2.1.*
-  - pyproj=3.7.*
-  - netcdf4=1.7.*
-  - h5py=3.13.*
-  - h5netcdf=1.6.*
-  - xarray=2025.4.*
+  - cartopy
+  - shapely
+  - pyproj
+  - netcdf4
+  - h5py
+  - h5netcdf
+  - xarray
   
   # Image processing
-  - opencv=4.11.*
-  - imageio=2.37.*
-  - imagecodecs=2024.12.*
-  - tifffile=2025.3.*
+  - opencv
+  - imageio
+  - imagecodecs
+  - tifffile
   
   # Machine Learning
-  - shap=0.47.*
-  - timm=1.0.*
-  - huggingface_hub=0.30.*
-  - safetensors=0.5.*
+  - shap
+  - timm
+  - huggingface_hub
+  - safetensors
   
   # Jupyter and development
-  - ipykernel=6.29.*
-  - ipython=8.36.*
-  - jupyter_client=8.6.*
-  - debugpy=1.8.*
+  - ipykernel
+  - ipython
+  - jupyter_client
+  - debugpy
   
   # Data processing
-  - dask=2025.5.*
-  - distributed=2025.5.*
-  - numba=0.61.*
-  - bottleneck=1.4.*
-  - openpyxl=3.1.*
+  - dask
+  - distributed
+  - numba
+  - bottleneck
+  - openpyxl
   
   # Utilities
-  - tqdm=4.67.*
-  - pyyaml=6.0.*
-  - requests=2.32.*
-  - click=8.2.*
-  - psutil=7.0.*
-  - filelock=3.18.*
+  - tqdm
+  - pyyaml
+  - requests
+  - click
+  - psutil
+  - filelock
   
   # Qt and GUI
-  - pyside6=6.9.*
-  - qtpy=2.4.*
-  - magicgui=0.10.*
-  - superqt=0.7.*
+  - pyside6
+  - qtpy
+  - magicgui
+  - superqt
   
   # pip dependencies
   - pip
