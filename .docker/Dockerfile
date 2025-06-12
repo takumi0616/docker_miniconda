@@ -45,7 +45,8 @@ COPY environments /app/environments
 
 # Conda環境の作成・更新
 RUN conda env update -n pytorch_env --file /app/environments/pytorch_env.yml --prune && \
-    conda env update -n tensorflow_env --file /app/environments/tensorflow_env.yml --prune
+    conda env update -n tensorflow_env --file /app/environments/tensorflow_env.yml --prune && \
+    conda env update -n acs_env --file /app/environments/acs_env.yml --prune
 
 # Condaをbashで使えるように初期化する（.bashrcに設定を書き込む）
 RUN conda init bash
