@@ -31,3 +31,9 @@ Bash
 
 (pytorch_env) root@container_id:/app# conda activate tensorflow_env
 (tensorflow_env) root@container_id:/app#
+
+コマンド
+cd docker_miniconda
+sudo docker compose build
+sudo docker compose up -d
+sudo docker compose exec app bush

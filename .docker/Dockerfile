@@ -44,8 +44,8 @@ RUN conda config --set auto_activate_base false && \
 COPY environments /app/environments
 
 # Conda環境の作成
-RUN conda env create -f /app/environments/pytorch_env.yml && \
-    conda env create -f /app/environments/tensorflow_env.yml
+RUN conda env create --force -f /app/environments/pytorch_env.yml && \
+    conda env create --force -f /app/environments/tensorflow_env.yml
 
 # コンテナ起動時にpytorch_envをデフォルトで有効にする
 SHELL ["conda", "run", "-n", "pytorch_env", "/bin/bash", "-c"]

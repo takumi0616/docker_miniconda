@@ -1,9 +1,8 @@
 name: tensorflow_env
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - python=3.12
   - tensorflow
-  - cudatoolkit=12.3 # TensorFlowが公式サポートするバージョン
-  - cudnn
+#  - cudatoolkit=12.3 # ← この行を削除またはコメントアウト
+#  - cudnn            # ← この行を削除またはコメントアウト

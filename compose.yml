@@ -1,3 +1,4 @@
+name: takumi0616-project # プロジェクト全体の一意な名前を指定
 services:
   app:
     build:
