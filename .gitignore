@@ -16,6 +16,9 @@ __pycache__/
 .vscode/
 .idea/
 
+# CDS API credentials
+.cdsapirc
+
 # OS specific
 .DS_Store
 Thumbs.db
