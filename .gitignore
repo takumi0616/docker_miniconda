@@ -1,0 +1,27 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak
+venv.bak
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE / Editor specific
+.vscode/
+.idea/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Ignore all files in src directory
+src/*
+
+# But do NOT ignore (re-include) check_gpu_torch.py
+!src/check_gpu_torch.py
