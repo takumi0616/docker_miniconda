@@ -165,9 +165,9 @@ GPUがないPCでこの環境を利用する場合は、`compose.yml`ファイ�
     ```diff
      # Conda環境の作成・更新
      RUN conda env update -n pytorch_env --file /app/environments/pytorch_env.yml --prune && \
--        conda env update -n tensorflow_env --file /app/environments/tensorflow_env.yml --prune
-+        conda env update -n tensorflow_env --file /app/environments/tensorflow_env.yml --prune && \
-+        conda env update -n sklearn_env --file /app/environments/sklearn_env.yml --prune
+    -        conda env update -n tensorflow_env --file /app/environments/tensorflow_env.yml --prune
+    +        conda env update -n tensorflow_env --file /app/environments/tensorflow_env.yml --prune && \
+    +        conda env update -n sklearn_env --file /app/environments/sklearn_env.yml --prune
     ```
 
 3.  **イメージを再ビルド**
