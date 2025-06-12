@@ -1,0 +1,16 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+    stdin_open: true # コンテナの標準入力を開く
+    tty: true # 仮想端末を割り当てる
+    volumes:
+      - ./src:/app/src # ホストのsrcディレクトリをコンテナの/app/srcにマウント
+    deploy: # GPUがない場合は、deployセクション全体をコメントアウト、または削除する
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
