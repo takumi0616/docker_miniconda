@@ -43,12 +43,15 @@ RUN conda config --set auto_activate_base false && \
 # 環境定義ファイルをコピー
 COPY environments /app/environments
 
-# Conda環境の作成
-RUN conda env create --force -f /app/environments/pytorch_env.yml && \
-    conda env create --force -f /app/environments/tensorflow_env.yml
+# Conda環境の作成・更新
+RUN conda env update -n pytorch_env --file /app/environments/pytorch_env.yml --prune && \
+    conda env update -n tensorflow_env --file /app/environments/tensorflow_env.yml --prune
 
-# コンテナ起動時にpytorch_envをデフォルトで有効にする
-SHELL ["conda", "run", "-n", "pytorch_env", "/bin/bash", "-c"]
+# Condaをbashで使えるように初期化する（.bashrcに設定を書き込む）
+RUN conda init bash
 
-# 起動時のメッセージ
-CMD ["echo", "Conda environment 'pytorch_env' is activated by default."]
+# bashの起動時にデフォルトのConda環境を有効にする設定を追記
+RUN echo "conda activate pytorch_env" >> ~/.bashrc
+
+# コンテナをバックグラウンドで起動し続けるための命令
+CMD ["sleep", "infinity"]

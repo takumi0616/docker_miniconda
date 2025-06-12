@@ -36,4 +36,4 @@ Bash
 cd docker_miniconda
 sudo docker compose build
 sudo docker compose up -d
-sudo docker compose exec app bush
+sudo docker compose exec app bash
