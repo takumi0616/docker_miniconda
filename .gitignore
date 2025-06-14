@@ -28,3 +28,4 @@ src/*
 
 # But do NOT ignore (re-include) check_gpu_torch.py
 !src/check_gpu_torch.py
+!src/check_cpu.py
