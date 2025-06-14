@@ -1,18 +1,17 @@
-name: takumi0616-project # プロジェクト全体の一意な名前を指定
+# 基本となるComposeファイル (CPU環境のデフォルト)
+name: takumi0616-project
+
 services:
   app:
     build:
       context: .
       dockerfile: .docker/Dockerfile
-    stdin_open: true # コンテナの標準入力を開く
-    tty: true # 仮想端末を割り当てる
+      args:
+        - BASE_IMAGE=ubuntu:22.04
+        - GPU_ENABLED=false
+    stdin_open: true
+    tty: true
     volumes:
-      - ./src:/app/src # ホストのsrcディレクトリをコンテナの/app/srcにマウント
-      - ./.cdsapirc:/root/.cdsapirc:ro  # ← この行を追加（読み取り専用）
-    deploy: # GPUがない場合は、deployセクション全体をコメントアウト、または削除する
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
+      - ./src:/app/src
+      - ./.cdsapirc:/root/.cdsapirc:ro
+    # platform: 'linux/amd64' # Apple Silicon Macでx86イメージを強制したい場合のみコメント解除
