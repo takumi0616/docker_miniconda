@@ -80,10 +80,10 @@ Mac ユーザーや、NVIDIA GPU を搭載していない PC の場合は、こ�
 
 ```bash
 # Dockerイメージをビルド
-docker compose build
+sudo docker compose build
 
 # コンテナをバックグラウンドで起動
-docker compose up -d
+sudo docker compose up -d
 ```
 
 #### B) GPU 環境の場合 (NVIDIA GPU 搭載 PC)
@@ -92,10 +92,10 @@ NVIDIA GPU を利用したい場合は、コマンドに`-f compose.gpu.yml`を�
 
 ```bash
 # GPU用の設定をマージしてDockerイメージをビルド
-docker compose -f compose.yml -f compose.gpu.yml build
+sudo docker compose -f compose.yml -f compose.gpu.yml build
 
 # GPUを有効にしてコンテナをバックグラウンドで起動
-docker compose -f compose.yml -f compose.gpu.yml up -d
+sudo docker compose -f compose.yml -f compose.gpu.yml up -d
 ```
 
 > **☕ Note:**
@@ -106,7 +106,7 @@ docker compose -f compose.yml -f compose.gpu.yml up -d
 起動したコンテナの中に入り、開発作業を開始します。
 
 ```bash
-docker compose exec app bash
+sudo docker compose exec app bash
 ```
 
 成功すると、シェルのプロンプトが以下のように変わり、デフォルトの`pytorch_env`環境が自動で有効化された状態になります。
