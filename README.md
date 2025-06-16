@@ -257,18 +257,18 @@ sudo docker compose exec app bash
 
 ```bash
 # コンテナを停止・削除
-docker compose down
+sudo docker compose down
 
 # データを永続化するボリュームも完全に削除する場合
-docker compose down -v
+sudo docker compose down -v
 ```
 
 #### B) GPU 環境の場合
 
 ```bash
 # コンテナを停止・削除
-docker compose -f compose.yml -f compose.gpu.yml down
+sudo docker compose -f compose.yml -f compose.gpu.yml down
 
 # ボリュームも完全に削除する場合
-docker compose -f compose.yml -f compose.gpu.yml down -v
+sudo docker compose -f compose.yml -f compose.gpu.yml down -v
 ```
