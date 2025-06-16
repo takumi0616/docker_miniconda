@@ -272,3 +272,15 @@ sudo docker compose -f compose.yml -f compose.gpu.yml down
 # ボリュームも完全に削除する場合
 sudo docker compose -f compose.yml -f compose.gpu.yml down -v
 ```
+
+ファイルの削除
+
+```bash
+sudo rm -rf src/ACS/prmsl/result_prmsl_acs_random_search
+```
+
+タスクの削除
+
+```bash
+pkill -f "multi_prmsl_acs_random.py"
+```
