@@ -6,6 +6,9 @@ services:
     build:
       # build.argsをGPU用の値で上書き
       args:
+        # gpu01の設定
+        # - BASE_IMAGE=nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04
+        # その他の設定
         - BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
         - GPU_ENABLED=true
     # GPUリソースを割り当てるdeployセクションを追加
