@@ -23,7 +23,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ncdu \
     ca-certificates \
     libsndfile1-dev \
-    libgl1 && \
+    libgl1 \
+    netcdf-bin && \
     rm -rf /var/lib/apt/lists/*
 
 # 3. CPUアーキテクチャを自動判別し、適切なMinicondaをインストール
