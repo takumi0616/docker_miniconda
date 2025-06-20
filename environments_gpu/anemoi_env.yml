@@ -5,18 +5,21 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  # 1. ベースとなるPythonとCUDAバージョンをCondaで指定
-  # ===================================================
+  # 1. ベースとなるPythonとCUDA、そしてPyTorchのバージョンを明示的に指定
+  # =================================================================
   - python=3.10
-  # この値はビルド時にPYTORCH_CUDA_VERSION引数で上書きされます
+  # 成功例の実績に基づき、PyTorchのバージョンを固定
+  - pytorch=2.4.1
+  - torchvision=0.19.1
+  - torchaudio=2.4.1
+  # pytorch_envの実行結果でPyTorchがCUDA 12.1で動作していることが確認できているため、
+  # 12.1を指定。もしベースのDockerイメージがCUDA 12.4であることが確実なら
+  # pytorch-cuda=12.4 に変更することも検討してください。
   - pytorch-cuda=12.1
 
-  # 2. 主要な機械学習・科学技術計算ライブラリをCondaでインストール
-  # (バイナリ互換性を保つため、Condaでのインストールを推奨)
+  # 2. 主要な機械学習・科学技術計算ライブラリ
+  # (PyTorchのバージョンが固定されたので、依存関係が安定します)
   # =============================================================
-  - pytorch
-  - torchvision
-  - torchaudio
   - pytorch-lightning
   - torch-geometric
   - pyg-lib
@@ -39,21 +42,20 @@ dependencies:
   - tqdm
   - mlflow
   - hydra-core
-  - sqlalchemy
+  - sqlalchemy # alembic/mlflowで必要
 
-  # 3. 上記以外のライブラリや、特定のバージョンが必要なものをpipでインストール
+  # 3. 上記以外のライブラリ (pip)
   # ===================================================================
   - pip
   - pip:
-    # --- Anemoi Suite (バージョンを固定) ---
-    - anemoi-datasets==0.5.26.dev1+g1d656ee
-    - anemoi-graphs==0.6.1
-    - anemoi-inference==0.4.9
-    - anemoi-models==0.8.0
-    - anemoi-training==0.5.0
-    - anemoi-transform==0.1.11
-    - anemoi-utils==0.4.23
-    # ------------------------------------
+    # Anemoi Suite
+    - anemoi-datasets
+    - anemoi-graphs
+    - anemoi-inference
+    - anemoi-models
+    - anemoi-training
+    - anemoi-transform
+    - anemoi-utils
     
     # ECMWF tools
     - ecmwf-opendata
@@ -61,6 +63,8 @@ dependencies:
     - cdsapi
     
     # GPU-specific libraries
+    # flash-attnとtritonはPyTorchのバージョンと強く結びつきます。
+    # PyTorch 2.4.1をインストール後、互換性のあるバージョンがpipによって選択されます。
     - flash-attn
     - triton
 
