@@ -1,16 +1,24 @@
 # GPU環境用の上書き設定ファイル
-# 実行コマンド: docker compose -f compose.yml -f compose.gpu.yml up
+# 実行コマンド: PYTORCH_CUDA_VERSION=12.1 docker compose -f compose.yml -f compose.gpu.yml up
 
 services:
   app:
     build:
       # build.argsをGPU用の値で上書き
       args:
-        # gpu01の設定
-        # - BASE_IMAGE=nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04
-        # その他の設定
-        - BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
+        # 1. 使用したいベースイメージを選択 (この行を編集)
+        - BASE_IMAGE=nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04
+        # PYTORCH_CUDA_VERSION=12.1 sudo docker compose -f compose.yml -f compose.gpu.yml build
+
+        # - BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
+        # PYTORCH_CUDA_VERSION=12.4 sudo docker compose -f compose.yml -f compose.gpu.yml build
+
+        # 2. GPUを有効化
         - GPU_ENABLED=true
+
+        # 3. コマンドラインからPYTORCH_CUDA_VERSIONを受け取る (デフォルトは12.4)
+        - PYTORCH_CUDA_VERSION=${PYTORCH_CUDA_VERSION:-12.4}
+
     # GPUリソースを割り当てるdeployセクションを追加
     deploy:
       resources:

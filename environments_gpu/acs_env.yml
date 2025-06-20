@@ -12,7 +12,7 @@ dependencies:
   - pytorch=2.2.2
   - torchvision=0.17.2
   - torchaudio=2.2.2
-  - pytorch-cuda=12.1
+  - pytorch-cuda=12.4
   
   # Scientific computing
   - numpy

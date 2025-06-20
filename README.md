@@ -284,3 +284,8 @@ sudo rm -rf src/ACS/prmsl/result_prmsl_acs_random_search
 ```bash
 pkill -f "multi_prmsl_acs_random.py"
 ```
+
+dockerの中身全削除
+```bash
+sudo docker system prune -a --volumes -f
+```

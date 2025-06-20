@@ -56,8 +56,17 @@ RUN find /app/environments -name "*.yml" -print0 | xargs -0 -I {} bash -c \
 
 # (ステップ2) GPUが有効な場合のみ、GPU用の環境で上書き更新 (environments_gpu/*.yml)
 ARG GPU_ENABLED=false
+# Conda環境ファイルに注入するCUDAバージョンをビルド引数として定義
+ARG PYTORCH_CUDA_VERSION=12.4
+ 
 COPY environments_gpu /app/environments_gpu
 RUN if [ "${GPU_ENABLED}" = "true" ]; then \
+        # --- ここから追加 ---
+        # environments_gpu内の全ymlファイルに対し、pytorch-cudaのバージョンを動的に置換する
+        echo "==> Templating Conda GPU environments with CUDA version: ${PYTORCH_CUDA_VERSION}" && \
+        find /app/environments_gpu -name "*.yml" -exec \
+            sed -i "s/pytorch-cuda=\S*/pytorch-cuda=${PYTORCH_CUDA_VERSION}/g" {} + && \
+        # --- ここまで追加 ---
         if [ -d "/app/environments_gpu" ] && [ "$(ls -A /app/environments_gpu)" ]; then \
             find /app/environments_gpu -name "*.yml" -print0 | xargs -0 -I {} bash -c \
             'echo "Updating env with GPU packages from {}" && conda env update --file {} --prune'; \
