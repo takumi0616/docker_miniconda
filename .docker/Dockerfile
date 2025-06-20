@@ -71,6 +71,8 @@ RUN if [ "${GPU_ENABLED}" = "true" ]; then \
             find /app/environments_gpu -name "*.yml" -print0 | xargs -0 -I {} bash -c \
             'echo "Updating env with GPU packages from {}" && conda env update --file {} --prune'; \
         fi; \
+        echo "==> Cleaning up Conda cache" && \
+        conda clean -a -y; \
     fi
 
 # Condaをbashで使えるように初期化
