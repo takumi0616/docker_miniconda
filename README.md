@@ -319,6 +319,27 @@ Dockerの中身全削除（注意：全てのDockerリソースが削除され�
 sudo docker system prune -a --volumes -f
 ```
 
+dockerの占有容量確認
+```bash
+docker system df
+```
+
+イメージを使用しているコンテナを停止・削除
+```bash
+sudo docker ps -a
+
+# 上で確認したコンテナIDを指定してください
+sudo docker rm [コンテナID] 
+```
+
+dockerイメージを削除
+```bash
+sudo docker images
+
+# 上で確認したイメージIDを指定してください
+sudo docker rmi [イメージID]
+```
+
 ---
 
 ## 🔄 新しいワークフローのまとめ
