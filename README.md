@@ -16,7 +16,12 @@ NVIDIA GPU と CPU の両方に対応した、ポータブルな機械学習・�
 - **簡単な CPU/GPU 環境の切り替え**
 
   - NVIDIA GPU がなくても、CPU 環境で全ての機能が動作します。
-  - GPU を使いたい時だけ、コマンドに短いオプションを追加するだけで、自動的に GPU 対応環境に切り替わります。もう設定ファイルを手で編集する必要はありません。
+  - GPU を使いたい時は、CUDAバージョンを指定するだけで、自動的に GPU 対応環境に切り替わります。
+
+- **動的なCUDAバージョン管理**
+
+  - ビルド時に`PYTORCH_CUDA_VERSION`環境変数を指定することで、PyTorchのCUDAバージョンを動的に設定できます。
+  - バージョン不整合のリスクを最小限に抑えた、柔軟な環境構築が可能です。
 
 - **宣言的な Conda 環境管理**
 
@@ -66,7 +71,7 @@ NVIDIA GPU と CPU の両方に対応した、ポータブルな機械学習・�
 まず、このプロジェクトをお手元にダウンロードします。
 
 ```bash
-git clone [https://github.com/takumi0616/docker_miniconda.git](https://github.com/takumi0616/docker_miniconda.git)
+git clone https://github.com/takumi0616/docker_miniconda.git
 cd docker_miniconda
 ```
 
@@ -88,15 +93,36 @@ sudo docker compose up -d
 
 #### B) GPU 環境の場合 (NVIDIA GPU 搭載 PC)
 
-NVIDIA GPU を利用したい場合は、コマンドに`-f compose.gpu.yml`を追加して、GPU 用の設定を読み込ませます。
+NVIDIA GPU を利用する場合、**2つのステップ**で環境を構築します。
+
+**ステップ1: ベースイメージの選択（初回のみ）**
+
+まず、`compose.gpu.yml` ファイルを開き、お使いの環境とライブラリに最適な `BASE_IMAGE` を1つだけ選択します（コメントを外します）。PyTorchが公式サポートする `12.1` または `11.8` が推奨です。
+
+```yaml
+# compose.gpu.yml
+```
+      args:
+        # 1. 使用したいベースイメージを選択 (この行を編集)
+        - BASE_IMAGE=nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04
+        # - BASE_IMAGE=nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
+```
+```
+
+**ステップ2: ビルドと起動**
+
+次に、ターミナルで以下のコマンドを実行します。PYTORCH_CUDA_VERSIONに、ステップ1で選んだCUDAバージョン（例: 12.1）を指定してください。
 
 ```bash
-# GPU用の設定をマージしてDockerイメージをビルド
-sudo docker compose -f compose.yml -f compose.gpu.yml build
+# 環境変数を指定してGPU用のイメージをビルド
+# (PYTORCH_CUDA_VERSIONは compose.gpu.yml で選んだバージョンに合わせる)
+PYTORCH_CUDA_VERSION=12.1 sudo docker compose -f compose.yml -f compose.gpu.yml build
 
 # GPUを有効にしてコンテナをバックグラウンドで起動
 sudo docker compose -f compose.yml -f compose.gpu.yml up -d
 ```
+
+この手順により、PYTORCH_CUDA_VERSION変数が全てのGPU用Conda環境に適用され、バージョン不整合のリスクなく環境を構築できます。
 
 > **☕ Note:**
 > 初回のビルドは、ベースイメージや多数のライブラリをダウンロードするため、ネットワーク環境によっては 10 分以上かかる場合があります。2 回目以降はキャッシュが利用されるため、高速に完了します。
@@ -126,33 +152,33 @@ sudo docker compose exec app bash
 - **CPU 環境で実行する場合:**
 
   ```bash
-  (pytorch_env) root@...:/app# python src/check_cpu.py
+  (pytorch_env) root@```:/app# python src/check_cpu.py
   ```
 
   **実行結果の例:**
 
   ```
-  Starting CPU environment check...
+  Starting CPU environment check```
   ============================================================
   ===== SYSTEM & CPU INFORMATION CHECKER
   ============================================================
   Python Version: 3.12.3 | packaged by conda-forge | (main, May 10 2024, 18:03:52) [GCC 12.3.0]
   OS: Linux 6.6.31-linuxkit
   Architecture: aarch64
-  ...
+  ```
   PyTorch CPU check: PASSED
   TensorFlow CPU check: PASSED
-  ...
+  ```
   ```
 
 - **GPU 環境で実行する場合:**
   ```bash
-  (pytorch_env) root@...:/app# python src/check_gpu_torch.py
+  (pytorch_env) root@```:/app# python src/check_gpu_torch.py
   ```
   **実行結果の例:**
   ```
   PyTorch version: 2.4.1
-  CUDA version: 12.4
+  CUDA version: 12.1
   cuDNN version: 8907
   Number of GPUs available: 1
   Device name: NVIDIA GeForce RTX 4090
@@ -163,18 +189,18 @@ sudo docker compose exec app bash
 - **他の環境への切り替え:**
 
   ```bash
-  # tensorflow_envに切り替える
-  (pytorch_env) root@...:/app# conda activate tensorflow_env
-  (tensorflow_env) root@...:/app#
+  # acs_envに切り替える（GPU環境の場合）
+  (pytorch_env) root@```:/app# conda activate acs_env
+  (acs_env) root@```:/app#
 
   # ベースの環境に戻る
-  (tensorflow_env) root@...:/app# conda deactivate
-  root@...:/app#
+  (acs_env) root@```:/app# conda deactivate
+  root@```:/app#
   ```
 
 - **利用可能な環境の一覧表示:**
   ```bash
-  (pytorch_env) root@...:/app# conda env list
+  (pytorch_env) root@```:/app# conda env list
   ```
 
 ---
@@ -207,8 +233,8 @@ sudo docker compose exec app bash
     # CPU環境の場合
     docker compose build
 
-    # GPU環境の場合
-    docker compose -f compose.yml -f compose.gpu.yml build
+    # GPU環境の場合（CUDAバージョンを指定）
+    PYTORCH_CUDA_VERSION=12.1 docker compose -f compose.yml -f compose.gpu.yml build
     ```
 
     ビルド完了後、コンテナに入れば`conda activate my_new_env`で新しい環境が使えます。
@@ -222,7 +248,8 @@ sudo docker compose exec app bash
 
 2.  **イメージを再ビルド**: 上記と同様に`build`コマンドを実行します。`conda env update`が差分だけを賢く更新してくれるため、効率的にパッケージが追加されます。
 
-> **⚠️ クロスプラットフォーム対応のヒント:** > `.yml`ファイルでライブラリのバージョンを厳密に固定（例: `pytorch=2.2.2`）すると、他の CPU アーキテクチャ（Intel vs Apple Silicon）でパッケージが見つからず、ビルドに失敗する原因となります。特別な理由がない限り、**バージョン番号は指定しない**ことを強く推奨します。これにより、Conda が各環境で利用可能な互換バージョンを自動で選択してくれます。
+> **⚠️ クロスプラットフォーム対応のヒント:**
+> `.yml`ファイルでライブラリのバージョンを厳密に固定（例: `pytorch=2.2.2`）すると、他の CPU アーキテクチャ（Intel vs Apple Silicon）でパッケージが見つからず、ビルドに失敗する原因となります。特別な理由がない限り、**バージョン番号は指定しない**ことを強く推奨します。これにより、Conda が各環境で利用可能な互換バージョンを自動で選択してくれます。
 
 ---
 
@@ -231,17 +258,19 @@ sudo docker compose exec app bash
 ```
 .
 ├── .docker
-│   └── Dockerfile             # (全自動) 環境構築の設計図。通常は編集不要。
+│   ├── Dockerfile             # (全自動) 環境構築の設計図。通常は編集不要。
+│   └── README.md              # Dockerインストール手順の詳細ガイド
 ├── .gitignore                 # Gitの追跡対象外ファイルを指定
 ├── README.md                  # このファイル
 ├── compose.yml                # Dockerコンテナの基本設定 (CPU用)
 ├── compose.gpu.yml            # GPU利用時の上書き設定
 ├── environments               # (★主に編集する場所) CPU用のConda環境定義
-│   ├── acs_env.yml
-│   ├── pytorch_env.yml
-│   └── tensorflow_env.yml
+│   ├── acs_cpu_env.yml        # ACS研究用CPU環境
+│   └── pytorch_env.yml        # PyTorch基本環境
 ├── environments_gpu           # (★GPU利用時に編集) GPU用のConda環境定義
-│   └── pytorch_env.yml
+│   ├── acs_env.yml            # ACS研究用GPU環境（PyTorch含む）
+│   ├── pytorch_env.yml        # PyTorch GPU環境
+│   └── tensorflow_env.yml     # TensorFlow GPU環境
 └── src                        # ソースコードやスクリプト、データを配置
     ├── check_cpu.py           # CPU環境の動作確認スクリプト
     └── check_gpu_torch.py     # GPU環境の動作確認スクリプト
@@ -273,19 +302,52 @@ sudo docker compose -f compose.yml -f compose.gpu.yml down
 sudo docker compose -f compose.yml -f compose.gpu.yml down -v
 ```
 
-ファイルの削除
+### その他のクリーンアップコマンド
 
+ファイルの削除
 ```bash
 sudo rm -rf src/ACS/prmsl/result_prmsl_acs_random_search
 ```
 
 タスクの削除
-
 ```bash
 pkill -f "multi_prmsl_acs_random.py"
 ```
 
-dockerの中身全削除
+Dockerの中身全削除（注意：全てのDockerリソースが削除されます）
 ```bash
 sudo docker system prune -a --volumes -f
 ```
+
+---
+
+## 🔄 新しいワークフローのまとめ
+
+以上の改善により、今後は以下の手順で迅速に環境を構築できます。
+
+1.  **初めての環境構築、またはCUDAバージョンを変更したい場合:**
+    1.  `compose.gpu.yml` を開き、使用する`BASE_IMAGE`の行のコメントを編集する。
+    2.  `PYTORCH_CUDA_VERSION=<バージョン>` を先頭につけて `build` コマンドを実行する。
+
+2.  **同じCUDAバージョンで再構築する場合:**
+    * 単純に `PYTORCH_CUDA_VERSION=<バージョン>` をつけて `build` コマンドを実行するだけでOKです。
+
+この仕組みによって、CUDAバージョンの違いに起因するトラブルシューティングの時間を大幅に削減できるはずです。
+
+---
+
+## 📝 ライセンス
+
+このプロジェクトは MIT ライセンスのもとで公開されています。詳細は [LICENSE](LICENSE) ファイルをご覧ください。
+
+---
+
+## 🤝 貢献
+
+プルリクエストや Issue の報告を歓迎します！より良い開発環境を一緒に作っていきましょう。
+
+---
+
+## 📞 サポート
+
+質問や問題がある場合は、[Issues](https://github.com/takumi0616/docker_miniconda/issues) ページで報告してください。
