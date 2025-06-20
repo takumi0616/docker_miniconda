@@ -16,6 +16,6 @@ services:
       - ./.cdsapirc:/root/.cdsapirc:ro
 
       # gpu01で共有メモリ不足になったら
-      - /dev/shm:/dev/shm  # ホストの共有メモリを直接マウント
-      
+      # - /dev/shm:/dev/shm  # ホストの共有メモリを直接マウント
+
     # platform: 'linux/amd64' # Apple Silicon Macでx86イメージを強制したい場合のみコメント解除
