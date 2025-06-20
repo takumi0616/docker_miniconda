@@ -1,0 +1,72 @@
+name: anemoi_env
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  # 1. ベースとなるPythonとCUDAバージョンをCondaで指定
+  # ===================================================
+  - python=3.10
+  # この値はビルド時にPYTORCH_CUDA_VERSION引数で上書きされます
+  - pytorch-cuda=12.1
+
+  # 2. 主要な機械学習・科学技術計算ライブラリをCondaでインストール
+  # (バイナリ互換性を保つため、Condaでのインストールを推奨)
+  # =============================================================
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-lightning
+  - torch-geometric
+  - pyg-lib
+  - numpy
+  - scipy
+  - scikit-learn
+  - pandas
+  - xarray
+  - zarr
+  - dask
+  - numba
+  - cartopy
+  - eccodes
+  - cfgrib
+  - netcdf4
+  - h5py
+  - matplotlib
+  - seaborn
+  - plotly
+  - tqdm
+  - mlflow
+  - hydra-core
+  - sqlalchemy
+
+  # 3. 上記以外のライブラリや、特定のバージョンが必要なものをpipでインストール
+  # ===================================================================
+  - pip
+  - pip:
+    # --- Anemoi Suite (バージョンを固定) ---
+    - anemoi-datasets==0.5.26.dev1+g1d656ee
+    - anemoi-graphs==0.6.1
+    - anemoi-inference==0.4.9
+    - anemoi-models==0.8.0
+    - anemoi-training==0.5.0
+    - anemoi-transform==0.1.11
+    - anemoi-utils==0.4.23
+    # ------------------------------------
+    
+    # ECMWF tools
+    - ecmwf-opendata
+    - ecmwf-datastores-client
+    - cdsapi
+    
+    # GPU-specific libraries
+    - flash-attn
+    - triton
+
+    # その他
+    - timm
+    - fastapi
+    - uvicorn
+    - gunicorn
+    - docker
