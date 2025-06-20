@@ -83,4 +83,4 @@ dependencies:
 #     timm fastapi uvicorn gunicorn docker
 
   # anemoi-training config validate --config-name=config.yaml
-  # anemoi-training train --config-name=config.yaml
+  # ANEMOI_BASE_SEED=42 anemoi-training train --config-name=config.yaml
