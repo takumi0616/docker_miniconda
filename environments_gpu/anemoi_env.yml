@@ -15,7 +15,7 @@ dependencies:
   # pytorch_envの実行結果でPyTorchがCUDA 12.1で動作していることが確認できているため、
   # 12.1を指定。もしベースのDockerイメージがCUDA 12.4であることが確実なら
   # pytorch-cuda=12.4 に変更することも検討してください。
-  - pytorch-cuda=12.1
+  - pytorch-cuda=12.4
 
   # 2. 主要な機械学習・科学技術計算ライブラリ
   # (PyTorchのバージョンが固定されたので、依存関係が安定します)
