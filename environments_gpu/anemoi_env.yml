@@ -17,60 +17,70 @@ dependencies:
   # pytorch-cuda=12.4 に変更することも検討してください。
   - pytorch-cuda=12.4
 
-  # 2. 主要な機械学習・科学技術計算ライブラリ
-  # (PyTorchのバージョンが固定されたので、依存関係が安定します)
-  # =============================================================
-  - pytorch-lightning
-  - torch-geometric
-  - pyg-lib
-  - numpy
-  - scipy
-  - scikit-learn
-  - pandas
-  - xarray
-  - zarr
-  - dask
-  - numba
-  - cartopy
-  - eccodes
-  - cfgrib
-  - netcdf4
-  - h5py
-  - matplotlib
-  - seaborn
-  - plotly
-  - tqdm
-  - mlflow
-  - hydra-core
-  - sqlalchemy # alembic/mlflowで必要
+  # # 2. 主要な機械学習・科学技術計算ライブラリ
+  # # (PyTorchのバージョンが固定されたので、依存関係が安定します)
+  # # =============================================================
+  # - pytorch-lightning
+  # - torch-geometric
+  # - pyg-lib
+  # - numpy
+  # - scipy
+  # - scikit-learn
+  # - pandas
+  # - xarray
+  # - zarr
+  # - dask
+  # - numba
+  # - cartopy
+  # - eccodes
+  # - cfgrib
+  # - netcdf4
+  # - h5py
+  # - matplotlib
+  # - seaborn
+  # - plotly
+  # - tqdm
+  # - mlflow
+  # - hydra-core
+  # - sqlalchemy # alembic/mlflowで必要
 
-  # 3. 上記以外のライブラリ (pip)
-  # ===================================================================
+  # # 3. 上記以外のライブラリ (pip)
+  # # ===================================================================
   - pip
-  - pip:
-    # Anemoi Suite
-    - anemoi-datasets
-    - anemoi-graphs
-    - anemoi-inference
-    - anemoi-models
-    - anemoi-training
-    - anemoi-transform
-    - anemoi-utils
+  # - pip:
+  #   # Anemoi Suite
+  #   - anemoi-datasets
+  #   - anemoi-graphs
+  #   - anemoi-inference
+  #   - anemoi-models
+  #   - anemoi-training
+  #   - anemoi-transform
+  #   - anemoi-utils
     
-    # ECMWF tools
-    - ecmwf-opendata
-    - ecmwf-datastores-client
-    - cdsapi
+  #   # ECMWF tools
+  #   - ecmwf-opendata
+  #   - ecmwf-datastores-client
+  #   - cdsapi
     
-    # GPU-specific libraries
-    # flash-attnとtritonはPyTorchのバージョンと強く結びつきます。
-    # PyTorch 2.4.1をインストール後、互換性のあるバージョンがpipによって選択されます。
-    - flash-attn
-    - triton
+  #   # GPU-specific libraries
+  #   # flash-attnとtritonはPyTorchのバージョンと強く結びつきます。
+  #   # PyTorch 2.4.1をインストール後、互換性のあるバージョンがpipによって選択されます。
+  #   - flash-attn
+  #   - triton
 
-    # その他
-    - timm
-    - fastapi
-    - uvicorn
-    - gunicorn
-    - docker
+  #   # その他
+  #   - timm
+  #   - fastapi
+  #   - uvicorn
+  #   - gunicorn
+  #   - docker
+
+# pip install \
+#     anemoi-datasets anemoi-graphs anemoi-inference \
+#     anemoi-models anemoi-training anemoi-transform anemoi-utils \
+#     ecmwf-opendata ecmwf-datastores-client cdsapi \
+#     flash-attn triton \
+#     timm fastapi uvicorn gunicorn docker
+
+  # anemoi-training config validate --config-name=config.yaml
+  # anemoi-training train --config-name=config.yaml
