@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git-lfs \
     curl \
     htop \
+    nvtop \
     vim \
     tmux \
     tree \
