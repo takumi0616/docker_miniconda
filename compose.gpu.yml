@@ -6,11 +6,11 @@ services:
     build:
       # build.argsをGPU用の値で上書き
       args:
-        # 1. 使用したいベースイメージを選択 (この行を編集)
-        - BASE_IMAGE=nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04
+        # 1. 使用したいベースイメージを選択 (この行を編集、gpu01)
+        # - BASE_IMAGE=nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04
         # PYTORCH_CUDA_VERSION=12.1 sudo docker compose -f compose.yml -f compose.gpu.yml build
 
-        # - BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
+        - BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
         # PYTORCH_CUDA_VERSION=12.4 sudo docker compose -f compose.yml -f compose.gpu.yml build
 
         # 2. GPUを有効化
