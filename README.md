@@ -321,7 +321,7 @@ sudo docker system prune -a --volumes -f
 
 dockerの占有容量確認
 ```bash
-docker system df
+sudo docker system df
 ```
 
 イメージを使用しているコンテナを停止・削除
