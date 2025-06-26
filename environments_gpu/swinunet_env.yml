@@ -5,10 +5,10 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.10
-  - pytorch
-  - torchvision
-  - torchaudio
+  - python=3.12
+  - pytorch=2.4.1
+  - torchvision=0.19.1
+  - torchaudio=2.4.1
   - pytorch-cuda=12.4
 
   # Scientific computing
@@ -76,7 +76,7 @@ dependencies:
   # pip dependencies
   - pip
   - pip:
-      - japanize-matplotlib
-      - cdsapi
-      - ecmwf-datastores-client
-      - multiurl
+      - japanize-matplotlib==1.1.3
+      - cdsapi==0.7.6
+      - ecmwf-datastores-client==0.1.0
+      - multiurl==0.3.5

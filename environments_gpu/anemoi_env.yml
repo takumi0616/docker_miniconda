@@ -6,9 +6,9 @@ channels:
   - defaults
 dependencies:
   - python=3.10
-  - pytorch
-  - torchvision
-  - torchaudio
+  - pytorch=2.4.1
+  - torchvision=0.19.1
+  - torchaudio=2.4.1
   - pytorch-cuda=12.4
 
   - pytorch-lightning
@@ -33,35 +33,38 @@ dependencies:
   - tqdm
   - mlflow
   - hydra-core
-  - sqlalchemy
+  - sqlalchemy # alembic/mlflowで必要
 
+  # # 3. 上記以外のライブラリ (pip)
+  # # ===================================================================
   - pip
-  - pip:
-      # Anemoi Suite
-      - anemoi-datasets
-      - anemoi-graphs
-      - anemoi-inference
-      - anemoi-models
-      - anemoi-training
-      - anemoi-transform
-      - anemoi-utils
+  # - pip:
+  #   # Anemoi Suite
+  #   - anemoi-datasets
+  #   - anemoi-graphs
+  #   - anemoi-inference
+  #   - anemoi-models
+  #   - anemoi-training
+  #   - anemoi-transform
+  #   - anemoi-utils
 
-      # ECMWF tools
-      - ecmwf-opendata
-      - ecmwf-datastores-client
-      - cdsapi
+  #   # ECMWF tools
+  #   - ecmwf-opendata
+  #   - ecmwf-datastores-client
+  #   - cdsapi
 
-      # GPU-specific libraries
-      - flash-attn
-      - triton
+  #   # GPU-specific libraries
+  #   # flash-attnとtritonはPyTorchのバージョンと強く結びつきます。
+  #   # PyTorch 2.4.1をインストール後、互換性のあるバージョンがpipによって選択されます。
+  #   - flash-attn
+  #   - triton
 
-      # その他
-      - timm
-      - fastapi
-      - uvicorn
-      - gunicorn
-      - docker
-      
+  #   # その他
+  #   - timm
+  #   - fastapi
+  #   - uvicorn
+  #   - gunicorn
+  #   - docker
 # pip install \
 #     anemoi-datasets anemoi-graphs anemoi-inference \
 #     anemoi-models anemoi-training anemoi-transform anemoi-utils \
@@ -69,5 +72,5 @@ dependencies:
 #     flash-attn triton \
 #     timm fastapi uvicorn gunicorn docker
 
-#   anemoi-training config validate --config-name=config.yaml
-#   ANEMOI_BASE_SEED=42 anemoi-training train --config-name=config.yaml
+# anemoi-training config validate --config-name=config.yaml
+# ANEMOI_BASE_SEED=42 anemoi-training train --config-name=config.yaml

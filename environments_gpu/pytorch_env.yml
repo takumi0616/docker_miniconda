@@ -7,7 +7,7 @@ channels:
 dependencies:
   # environments/pytorch_env.ymlの定義に加え、以下を追加/上書き
   - python=3.12
-  - pytorch
-  - torchvision
-  - torchaudio
+  - pytorch=2.4.1
+  - torchvision=0.19.1
+  - torchaudio=2.4.1
   - pytorch-cuda=12.4 # ベースイメージのCUDAバージョンと合わせる

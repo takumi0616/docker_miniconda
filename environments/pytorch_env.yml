@@ -4,7 +4,7 @@ channels:
   - conda-forge # 依存関係解決のためconda-forgeを優先
   - defaults
 dependencies:
-  - python=3.12
+  - python
   - pytorch
   - torchvision
   - torchaudio

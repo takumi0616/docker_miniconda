@@ -11,7 +11,7 @@ services:
         # PYTORCH_CUDA_VERSION=12.1 sudo docker compose -f compose.yml -f compose.gpu.yml build --progress=plain
 
         - BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
-        # PYTORCH_CUDA_VERSION=12.4 sudo docker compose -f compose.yml -f compose.gpu.yml build --no-cache --progress=plain
+        # PYTORCH_CUDA_VERSION=12.4 sudo docker compose -f compose.yml -f compose.gpu.yml build --progress=plain
 
         # 2. GPUを有効化
         - GPU_ENABLED=true
