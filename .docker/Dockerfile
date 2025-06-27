@@ -61,6 +61,13 @@ RUN conda config --set auto_activate_base false && \
 
 # 4. Conda環境の段階的構築
 
+# (ステップ0) 既存のConda環境をすべて削除
+# これにより、ymlファイルが削除された場合でも、古い環境がイメージに残り続けるのを防ぎます。
+# /opt/conda/envs ディレクトリの中身をすべて削除します。
+RUN echo "==> Removing all existing conda environments..." && \
+    rm -rf ${CONDE_DIR}/envs/* && \
+    echo "All old environments removed successfully."
+
 # (ステップ1) CPU用の共通環境を構築 (environments/*.yml)
 # `environments`ディレクトリ内の全てのYAMLファイルを読み込み、Conda環境を構築または更新します。
 # `--prune`オプションにより、YAMLファイルにないパッケージは環境から削除されます。
