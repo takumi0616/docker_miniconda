@@ -351,6 +351,12 @@ sudo docker images
 sudo docker rmi [イメージID]
 ```
 
+docker build cache の削除
+
+```bash
+sudo docker builder prune
+```
+
 ---
 
 ## 🔄 新しいワークフローのまとめ
