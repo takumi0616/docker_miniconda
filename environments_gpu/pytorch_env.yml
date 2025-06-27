@@ -1,13 +1,13 @@
-name: pytorch_env # environments内の同名環境を上書き更新する
+name: pytorch_env
 channels:
   - pytorch
-  - nvidia # nvidiaチャネルを優先
+  - nvidia
   - conda-forge
   - defaults
 dependencies:
-  # environments/pytorch_env.ymlの定義に加え、以下を追加/上書き
-  - python=3.12
-  - pytorch=2.4.1
-  - torchvision=0.19.1
-  - torchaudio=2.4.1
-  - pytorch-cuda=12.4 # ベースイメージのCUDAバージョンと合わせる
+  - python=3.11
+  - pytorch-cuda=12.4
+  - pytorch
+  - torchvision
+  - torchaudio
+
