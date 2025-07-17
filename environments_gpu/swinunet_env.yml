@@ -15,6 +15,7 @@ dependencies:
   - scikit-learn
   - xarray
   - netcdf4
+  - dask
   - psutil
   - opencv
   - scikit-image
