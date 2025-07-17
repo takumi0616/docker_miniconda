@@ -318,7 +318,7 @@ sudo rm -rf src/ACS/prmsl/result_prmsl_acs_random_search
 タスクの削除
 
 ```bash
-pkill -f "multi_prmsl_acs_random.py"
+pkill -f "multi_prmsl_acs_random_v4.py"
 ```
 
 Docker の中身全削除（注意：全ての Docker リソースが削除されます）
