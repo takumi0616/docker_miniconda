@@ -312,7 +312,7 @@ sudo docker compose -f compose.yml -f compose.gpu.yml down -v
 ファイルの削除
 
 ```bash
-sudo rm -rf src/ACS/prmsl/result_prmsl_acs_random_search
+sudo rm -rf src/ACS/prmsl/result_prmsl_acs_random_search_v4
 ```
 
 タスクの削除
