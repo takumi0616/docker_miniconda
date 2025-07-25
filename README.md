@@ -364,6 +364,8 @@ sudo chown -R $USER:$USER /home/takumi/docker_miniconda/src/FrontLine/
 
 sudo chown -R s233319:s233319 /home/s233319/docker_miniconda/src/PressurePattern
 
+sudo chown -R devel:devel /home/devel/work_takasuka_git/docker_miniconda/src/PressurePattern
+
 sudo chown -R takumi:takumi /home/takumi/docker_miniconda/src/FrontLine/
 ```
 
