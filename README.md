@@ -369,6 +369,12 @@ sudo chown -R devel:devel /home/devel/work_takasuka_git/docker_miniconda/src/Pre
 sudo chown -R takumi:takumi /home/takumi/docker_miniconda/src/FrontLine/
 ```
 
+gpu チェック
+
+```bash
+watch -n 1 nvidia-smi
+```
+
 ---
 
 ## 🔄 新しいワークフローのまとめ
@@ -402,3 +408,7 @@ sudo chown -R takumi:takumi /home/takumi/docker_miniconda/src/FrontLine/
 ## 📞 サポート
 
 質問や問題がある場合は、[Issues](https://github.com/takumi0616/docker_miniconda/issues) ページで報告してください。
+
+```
+
+```
