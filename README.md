@@ -357,6 +357,16 @@ docker build cache の削除
 sudo docker builder prune
 ```
 
+ユーザー権限の譲渡
+
+```bash
+sudo chown -R $USER:$USER /home/takumi/docker_miniconda/src/FrontLine/
+
+sudo chown -R s233319:s233319 /home/s233319/docker_miniconda/src/PressurePattern
+
+sudo chown -R takumi:takumi /home/takumi/docker_miniconda/src/FrontLine/
+```
+
 ---
 
 ## 🔄 新しいワークフローのまとめ
