@@ -1,4 +1,4 @@
-name: frontline_env
+name: swinunet_env
 channels:
   - pytorch
   - nvidia
@@ -27,7 +27,10 @@ dependencies:
   - shap
   - einops
   - tqdm
+  - cupy
   - pip
   - pip:
       - japanize-matplotlib
       - skan
+      - scipy
+      - numba
