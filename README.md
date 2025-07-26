@@ -364,7 +364,7 @@ sudo chown -R $USER:$USER /home/takumi/docker_miniconda/src/FrontLine/
 
 sudo chown -R s233319:s233319 /home/s233319/docker_miniconda/src/PressurePattern
 
-sudo chown -R devel:devel /home/devel/work_takasuka_git/docker_miniconda/src/PressurePattern
+sudo chown -R devel:devel /home/devel/work_takasuka_git/docker_miniconda/src
 
 sudo chown -R takumi:takumi /home/takumi/docker_miniconda/src/FrontLine/
 ```
@@ -373,6 +373,14 @@ gpu チェック
 
 ```bash
 watch -n 1 nvidia-smi
+```
+
+rtx5090 で pytorch を使う際のコマンド
+
+```bash
+pip uninstall torch torchvision torchaudio
+
+pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
 ```
 
 ---

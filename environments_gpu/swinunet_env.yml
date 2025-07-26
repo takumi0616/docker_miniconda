@@ -27,7 +27,6 @@ dependencies:
   - shap
   - einops
   - tqdm
-  - cupy
   - pip
   - pip:
       - japanize-matplotlib
