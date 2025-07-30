@@ -383,6 +383,14 @@ pip uninstall torch torchvision torchaudio
 pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
 ```
 
+git の権利関係のコマンド
+
+```bash
+git config --local user.name "takumi0616"
+
+git config --local user.email "takumi0616.mrt@gmail.com"
+```
+
 ---
 
 ## 🔄 新しいワークフローのまとめ
