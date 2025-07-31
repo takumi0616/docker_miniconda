@@ -27,7 +27,8 @@ dependencies:
   - shap
   - einops
   - tqdm
-  - h5netcdf 
+  - h5netcdf
+  - hdf5plugin
   - pip
   - pip:
       - japanize-matplotlib
