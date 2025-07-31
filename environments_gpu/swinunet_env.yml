@@ -32,6 +32,7 @@ dependencies:
   - pip
   - pip:
       - japanize-matplotlib
+      - cdsapi
       - skan
       - scipy
       - numba
