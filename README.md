@@ -391,6 +391,17 @@ git config --local user.name "takumi0616"
 git config --local user.email "takumi0616.mrt@gmail.com"
 ```
 
+gpu01, gpu02 においてデータの転送（SSD→HDD）
+
+```bash
+# 1. rsyncでデータを同期
+sudo rsync -avP /home/devel/work_takasuka_git/docker_miniconda/src/anemoi/ /mnt/gpu01C/devel/work_takasuka_git/docker_miniconda/src/anemoi/
+
+# 2. 同期が完了したら、元のディレクトリを削除してシンボリックリンクを作成
+sudo rm -rf /home/devel/work_takasuka_git/docker_miniconda/src/anemoi
+ln -s /mnt/gpu01C/devel/work_takasuka_git/docker_miniconda/src/anemoi /home/devel/work_takasuka_git/docker_miniconda/src/anemoi
+```
+
 ---
 
 ## 🔄 新しいワークフローのまとめ
