@@ -375,7 +375,7 @@ gpu チェック
 watch -n 1 nvidia-smi
 ```
 
-rtx5090 で pytorch を使う際のコマンド
+rtx5090 で pytorch を使う際のコマンド（使用する仮想環境で実行）
 
 ```bash
 pip uninstall torch torchvision torchaudio
