@@ -110,7 +110,7 @@ RUN conda init bash
 
 # デフォルトのConda環境を有効化
 # コンテナ起動時に自動的に`pytorch_env`がアクティベートされるように設定します。
-RUN echo "conda activate pytorch_env" >> ~/.bashrc
+RUN echo "conda activate swinunet_env" >> ~/.bashrc
 
 # コンテナをバックグラウンドで起動し続けるコマンド
 # コンテナがすぐに終了しないようにし、後から`docker compose exec`でアクセスできるようにします。

@@ -435,7 +435,3 @@ ln -s /mnt/gpu01C/devel/work_takasuka_git/docker_miniconda/src/anemoi /home/deve
 ## 📞 サポート
 
 質問や問題がある場合は、[Issues](https://github.com/takumi0616/docker_miniconda/issues) ページで報告してください。
-
-```
-
-```
