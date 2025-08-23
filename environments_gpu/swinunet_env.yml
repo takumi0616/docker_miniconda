@@ -38,3 +38,4 @@ dependencies:
       - scipy
       - numba
       - nvitop
+      - imageio-ffmpeg
