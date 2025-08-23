@@ -1,3 +1,5 @@
+# .docker/Dockerfile
+
 # Dockerfile: ポータブルな機械学習開発環境の構築
 # このDockerfileは、CPU/GPUの両方に対応したConda環境を動的に構築します。
 
@@ -48,12 +50,10 @@ RUN case ${TARGETPLATFORM} in \
     /bin/bash ~/miniconda.sh -b -p $CONDA_DIR && \
     rm ~/miniconda.sh
 
-# PATH環境変数の設定: Condaの実行可能ファイルがシステムPATHに追加され、どこからでもコマンドが実行できるようになります
+# PATH環境変数の設定
 ENV PATH=$CONDA_DIR/bin:$PATH
 
-# Condaの初期設定:
-# - `auto_activate_base`を無効にし、デフォルトでbase環境がアクティベートされないようにします。
-# - `conda-forge`, `pytorch`, `nvidia`チャネルを追加し、必要なパッケージを探索できるようにします。
+# Condaの初期設定
 RUN conda config --set auto_activate_base false && \
     conda config --add channels conda-forge && \
     conda config --add channels pytorch && \
@@ -62,34 +62,25 @@ RUN conda config --set auto_activate_base false && \
 # 4. Conda環境の段階的構築
 
 # (ステップ0) 既存のConda環境をすべて削除
-# これにより、ymlファイルが削除された場合でも、古い環境がイメージに残り続けるのを防ぎます。
-# /opt/conda/envs ディレクトリの中身をすべて削除します。
 RUN echo "==> Removing all existing conda environments..." && \
-    rm -rf ${CONDE_DIR}/envs/* && \
+    rm -rf ${CONDA_DIR}/envs/* || true && \
     echo "All old environments removed successfully."
 
 # (ステップ1) CPU用の共通環境を構築 (environments/*.yml)
-# `environments`ディレクトリ内の全てのYAMLファイルを読み込み、Conda環境を構築または更新します。
-# `--prune`オプションにより、YAMLファイルにないパッケージは環境から削除されます。
 COPY environments /app/environments
 RUN find /app/environments -name "*.yml" -print0 | xargs -0 -I {} bash -c \
     'echo "Creating/updating env from {}" && conda env update --file {} --prune'
 
 # (ステップ2) GPUが有効な場合のみ、GPU用の環境で上書き更新 (environments_gpu/*.yml)
-# `GPU_ENABLED`引数が"true"の場合のみ実行されます。
-# PYTORCH_CUDA_VERSIONを動的に環境ファイルに注入し、Conda環境を構築または更新します。
 ARG GPU_ENABLED=false
 ARG PYTORCH_CUDA_VERSION=12.4 # コマンドラインから渡されるCUDAバージョン
- 
 COPY environments_gpu /app/environments_gpu
 RUN if [ "${GPU_ENABLED}" = "true" ]; then \
         echo "==> Templating Conda GPU environments with CUDA version: ${PYTORCH_CUDA_VERSION}" && \
-        # environments_gpu内の全ymlファイルに対し、pytorch-cudaのバージョンを動的に置換する
+        # sed の置換（GNU sed）。\S は使えないため [0-9.]+ に変更
         find /app/environments_gpu -name "*.yml" -exec \
-            sed -i "s/pytorch-cuda=\S*/pytorch-cuda=${PYTORCH_CUDA_VERSION}/g" {} + && \
+            sed -E -i "s/pytorch-cuda=[0-9.]+/pytorch-cuda=${PYTORCH_CUDA_VERSION}/g" {} + && \
         \
-        # 各環境ファイルをループで処理し、エラーがあればビルドを中断
-        # これにより、どの環境構築で問題が発生したかを明確に把握できます。
         for ENV_FILE in $(find /app/environments_gpu -name "*.yml"); do \
             echo "--> Attempting to create/update Conda environment from ${ENV_FILE}"; \
             conda env update --file "${ENV_FILE}" --prune || { \
@@ -99,19 +90,20 @@ RUN if [ "${GPU_ENABLED}" = "true" ]; then \
             }; \
             echo "--> Successfully processed ${ENV_FILE}"; \
         done; \
-        \
         echo "==> Cleaning up Conda cache" && \
         conda clean -a -y; \
     fi
 
 # Condaをbashで使えるように初期化
-# これにより、コンテナ内でシェルにログインした際にcondaコマンドが利用可能になります。
 RUN conda init bash
 
-# デフォルトのConda環境を有効化
-# コンテナ起動時に自動的に`pytorch_env`がアクティベートされるように設定します。
+# デフォルトのConda環境を有効化（必要に応じて変更）
 RUN echo "conda activate swinunet_env" >> ~/.bashrc
 
-# コンテナをバックグラウンドで起動し続けるコマンド
-# コンテナがすぐに終了しないようにし、後から`docker compose exec`でアクセスできるようにします。
+# 通知ラッパーをイメージに同梱（PATHに入れる）
+# リポジトリの scripts/notify-run をコピー（ビルドコンテキストはプロジェクトルート）
+COPY scripts/notify-run /usr/local/bin/notify-run
+RUN chmod +x /usr/local/bin/notify-run
+
+# コンテナをバックグラウンドで起動し続ける
 CMD ["sleep", "infinity"]

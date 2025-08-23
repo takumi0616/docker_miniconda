@@ -1,3 +1,4 @@
+# compose.yml
 # 基本となるComposeファイル (CPU環境のデフォルト)
 name: takumi0616-project
 
@@ -11,11 +12,25 @@ services:
         - GPU_ENABLED=false
     stdin_open: true
     tty: true
+
+    # .env の値をコンテナに渡す
+    env_file:
+      - .env
+    environment:
+      # ホストのホスト名をコンテナに伝える（通知メッセージに含めるため）
+      - HOST_HOSTNAME=${HOSTNAME}
+      # ない場合でも TZ 等は .env で上書き可能
+      - TZ=${TZ:-Asia/Tokyo}
+      # デフォルト値の安全網（.env 未設定時）
+      - NTFY_SERVER=${NTFY_SERVER:-https://ntfy.sh}
+      - NTFY_TOPIC=${NTFY_TOPIC:-}
+      - NTFY_TOKEN=${NTFY_TOKEN:-}
+
     volumes:
       - ./src:/app/src
       - ./.cdsapirc:/root/.cdsapirc:ro
-
       # gpu01で共有メモリ不足になったら
-      - /dev/shm:/dev/shm  # ホストの共有メモリを直接マウント
+      - /dev/shm:/dev/shm # ホストの共有メモリを直接マウント
+
 
     # platform: 'linux/amd64' # Apple Silicon Macでx86イメージを強制したい場合のみコメント解除

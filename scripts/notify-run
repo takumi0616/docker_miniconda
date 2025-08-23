@@ -1,0 +1,166 @@
+#!/usr/bin/env bash
+# scripts/notify-run
+set -euo pipefail
+
+# Defaults (can be overridden by env or options)
+NTFY_SERVER_DEFAULT="${NTFY_SERVER:-https://ntfy.sh}"
+NTFY_TOPIC_DEFAULT="${NTFY_TOPIC:-}"
+NTFY_TOKEN_DEFAULT="${NTFY_TOKEN:-}"
+PRIORITY_DEFAULT="3" # 1..5
+
+log_file=""
+priority="${PRIORITY_DEFAULT}"
+custom_title=""
+custom_tags=""
+server="${NTFY_SERVER_DEFAULT}"
+topic="${NTFY_TOPIC_DEFAULT}"
+token="${NTFY_TOKEN_DEFAULT}"
+
+usage() {
+  cat <<'USAGE'
+notify-run: 任意のコマンドを実行し、開始・完了・失敗を ntfy に通知するラッパー
+
+使い方:
+  notify-run [オプション] -- <command> [args...]
+
+主なオプション:
+  -l, --log FILE        標準出力/標準エラーを FILE に tee する
+  -p, --priority N      通知の優先度 1..5 (デフォルト: 3)
+  -t, --topic TOPIC     通知トピック (.env の NTFY_TOPIC がなければ必須)
+  -s, --server URL      ntfy サーバURL (デフォルト: https://ntfy.sh)
+  -T, --token TOKEN     認証トークン（自前サーバ利用時のみ）
+  --title TITLE         通知タイトルを上書き（ホスト名やコマンドは自動付与されます）
+  --tags TAG1,TAG2      通知タグ（絵文字名/キーワード）例: rocket,alarm_clock
+  -h, --help            ヘルプ
+
+例:
+  notify-run -- python src/train.py --epochs 100
+  notify-run -l logs/job_$(date +%F_%H%M).log -- conda run -n swinunet_env python src/train.py
+USAGE
+}
+
+# Parse options
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -l|--log) log_file="$2"; shift 2 ;;
+    -p|--priority) priority="$2"; shift 2 ;;
+    -t|--topic) topic="$2"; shift 2 ;;
+    -s|--server) server="$2"; shift 2 ;;
+    -T|--token) token="$2"; shift 2 ;;
+    --title) custom_title="$2"; shift 2 ;;
+    --tags) custom_tags="$2"; shift 2 ;;
+    -h|--help) usage; exit 0 ;;
+    --) shift; break ;;
+    *) echo "Unknown option: $1" >&2; usage; exit 1 ;;
+  esac
+done
+
+if [[ $# -eq 0 ]]; then
+  echo "エラー: 実行するコマンドが指定されていません" >&2
+  usage
+  exit 1
+fi
+
+if [[ -z "${topic}" ]]; then
+  echo "エラー: NTFY_TOPIC が設定されていません。.env で設定するか --topic を指定してください。" >&2
+  exit 1
+fi
+
+publish() {
+  local title="$1"; shift
+  local body="$1"; shift
+  local tags="${1:-}"; shift || true
+  local prio="${1:-$priority}"; shift || true
+
+  local url="${server%/}/${topic}"
+  local args=(-sS -X POST -H "X-Title: ${title}" -H "X-Priority: ${prio}")
+  [[ -n "${tags}" ]] && args+=( -H "X-Tags: ${tags}" )
+  [[ -n "${token}" ]] && args+=( -H "Authorization: Bearer ${token}" )
+  # 失敗してもジョブに影響させない（通知だけが失敗）
+  curl "${args[@]}" -d "${body}" "${url}" >/dev/null 2>&1 || true
+}
+
+# Context info
+host="${HOST_HOSTNAME:-$(hostname -f 2>/dev/null || hostname || echo unknown-host)}"
+container="${HOSTNAME:-unknown-container}"
+user="${USER:-root}"
+conda_env="${CONDA_DEFAULT_ENV:-none}"
+start_ts=$(date +%s)
+start_iso=$(date -Iseconds)
+
+# Build titles and tags
+cmd_pretty="$*"
+title_base="${custom_title:-Job}"
+title_start="${title_base} ▶️ START"
+title_ok="${title_base} ✅ DONE"
+title_ng="${title_base} ❌ FAILED"
+tags_start="${custom_tags:+${custom_tags},}rocket,hourglass"
+tags_ok="${custom_tags:+${custom_tags},}white_check_mark"
+tags_ng="${custom_tags:+${custom_tags},}x,cross_mark"
+
+# Send START
+body_start=$(cat <<EOF
+host: ${host}
+container: ${container}
+user: ${user}
+conda: ${conda_env}
+start: ${start_iso}
+cmd: ${cmd_pretty}
+EOF
+)
+publish "${title_start}" "${body_start}" "${tags_start}" "${priority}"
+
+# Run command
+status=0
+if [[ -n "${log_file}" ]]; then
+  mkdir -p "$(dirname "${log_file}")"
+  set +e
+  "$@" 2>&1 | tee -a "${log_file}"
+  status=${PIPESTATUS[0]}
+  set -e
+else
+  set +e
+  "$@"
+  status=$?
+  set -e
+fi
+
+end_ts=$(date +%s)
+end_iso=$(date -Iseconds)
+elapsed=$((end_ts - start_ts))
+
+# Format elapsed as H:MM:SS
+h=$((elapsed/3600)); m=$(((elapsed%3600)/60)); s=$((elapsed%60))
+elapsed_fmt=$(printf "%d:%02d:%02d" "$h" "$m" "$s")
+
+if [[ $status -eq 0 ]]; then
+  body_ok=$(cat <<EOF
+host: ${host}
+container: ${container}
+user: ${user}
+conda: ${conda_env}
+end: ${end_iso}
+elapsed: ${elapsed_fmt}
+exit_code: 0
+cmd: ${cmd_pretty}
+$( [[ -n "${log_file}" ]] && echo "log: ${log_file}" )
+EOF
+)
+  publish "${title_ok}" "${body_ok}" "${tags_ok}" "${priority}"
+  exit 0
+else
+  body_ng=$(cat <<EOF
+host: ${host}
+container: ${container}
+user: ${user}
+conda: ${conda_env}
+end: ${end_iso}
+elapsed: ${elapsed_fmt}
+exit_code: ${status}
+cmd: ${cmd_pretty}
+$( [[ -n "${log_file}" ]] && echo "log: ${log_file}" )
+EOF
+)
+  publish "${title_ng}" "${body_ng}" "${tags_ng}" "5"
+  exit ${status}
+fi
