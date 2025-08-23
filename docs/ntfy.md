@@ -11,10 +11,8 @@
 - iOS/Android: アプリストアで「ntfy」をインストール
 - Mac/PC: ブラウザで https://ntfy.sh を開く（通知許可）
 - 「トピック」を作成
-  - Mac/サーバ等:
-    - openssl rand -hex 16
-    - または: python -c "import secrets;print(secrets.token_urlsafe(24))"
-  - 例: takumi-2fdfc8d6c1d9478a9d8d8fcd2a
+  - Topic name:takumin0616-docker-miniconda
+  - Use another server:https://ntfy.sh
 - アプリ（またはブラウザ）でこのトピックを購読（Follow/Subscribe）
 
 ## 3. コンテナ側の設定
@@ -69,5 +67,5 @@
 ## チェック
 
 ```bash
-notify-run -- python src/heavy_job.py
+notify-run -- python ntfy_notify.py
 ```
