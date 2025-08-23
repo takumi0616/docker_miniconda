@@ -68,6 +68,6 @@
 
 ## チェック
 
-```bush
+```bash
 notify-run -- python src/heavy_job.py
 ```
