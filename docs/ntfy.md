@@ -65,3 +65,9 @@
   - START ▶️, DONE ✅, FAILED ❌
   - タグ: rocket/hourglass/white_check_mark/x など
 - iOS の ntfy アプリではタグがアイコンに反映される
+
+## チェック
+
+```bush
+notify-run -- python src/heavy_job.py
+```
