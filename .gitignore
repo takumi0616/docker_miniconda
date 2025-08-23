@@ -1,6 +1,4 @@
 # Environments
-.env
-*.env
 .venv
 env/
 venv/
@@ -16,9 +14,6 @@ __pycache__/
 # IDE / Editor specific
 .vscode/
 .idea/
-
-# CDS API credentials
-.cdsapirc
 
 # OS specific
 .DS_Store
