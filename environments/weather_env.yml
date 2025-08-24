@@ -1,0 +1,38 @@
+name: weather_env
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python
+  - pytorch
+  - torchvision
+  - torchaudio
+  - numpy
+  - pandas
+  - scikit-learn
+  - xarray
+  - netcdf4
+  - dask
+  - psutil
+  - opencv
+  - scikit-image
+  - ffmpeg
+  - matplotlib
+  - seaborn
+  - cartopy
+  - timm
+  - shap
+  - einops
+  - tqdm
+  - h5netcdf
+  - hdf5plugin
+  - imageio
+  - pip
+  - pip:
+      - japanize-matplotlib
+      - cdsapi
+      - skan
+      - scipy
+      - numba
+      - imageio-ffmpeg
