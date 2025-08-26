@@ -367,6 +367,8 @@ sudo chown -R s233319:s233319 /home/s233319/docker_miniconda/src
 sudo chown -R devel:devel /home/devel/work_takasuka_git/docker_miniconda/src
 
 sudo chown -R takumi:takumi /home/takumi/docker_miniconda/src
+
+sudo chown -R devel:devel /home/devel/work_takasuka/docker_miniconda/src
 ```
 
 gpu チェック
