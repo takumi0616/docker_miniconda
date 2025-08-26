@@ -16,12 +16,17 @@ server="${NTFY_SERVER_DEFAULT}"
 topic="${NTFY_TOPIC_DEFAULT}"
 token="${NTFY_TOKEN_DEFAULT}"
 
+# New: Human friendly server label (e.g., gpu01)
+# Priority: CLI > env(NTFY_LABEL/HOST_LABEL) > empty
+server_label="${NTFY_LABEL:-${HOST_LABEL:-}}"
+
 usage() {
   cat <<'USAGE'
 notify-run: 任意のコマンドを実行し、開始・完了・失敗を ntfy に通知するラッパー
 
 使い方:
-  notify-run [オプション] -- <command> [args...]
+  notify-run [サーバー名ラベル] [オプション] -- <command> [args...]
+  例) notify-run gpu01 -- python ntfy_notify.py
 
 主なオプション:
   -l, --log FILE        標準出力/標準エラーを FILE に tee する
@@ -31,15 +36,22 @@ notify-run: 任意のコマンドを実行し、開始・完了・失敗を ntfy
   -T, --token TOKEN     認証トークン（自前サーバ利用時のみ）
   --title TITLE         通知タイトルを上書き（ホスト名やコマンドは自動付与されます）
   --tags TAG1,TAG2      通知タグ（絵文字名/キーワード）例: rocket,alarm_clock
+  -H, --host-label NAME 通知に表示するサーバー名ラベル（例: gpu01）
   -h, --help            ヘルプ
+
+ポイント:
+  - サーバー名ラベルは「最初の非オプション引数」としても指定できます
+    例: notify-run gpu02 -- python job.py
+  - 環境変数 NTFY_LABEL または HOST_LABEL が設定されている場合は、それを既定ラベルとして利用します
+  - 送信に失敗してもジョブの実行自体は継続します（非停止設計）
 
 例:
   notify-run -- python src/train.py --epochs 100
-  notify-run -l logs/job_$(date +%F_%H%M).log -- conda run -n swinunet_env python src/train.py
+  notify-run gpu01 -l logs/job_$(date +%F_%H%M).log -- conda run -n swinunet_env python src/train.py
 USAGE
 }
 
-# Parse options
+# Parse options and optional positional server label (before --)
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -l|--log) log_file="$2"; shift 2 ;;
@@ -49,9 +61,21 @@ while [[ $# -gt 0 ]]; do
     -T|--token) token="$2"; shift 2 ;;
     --title) custom_title="$2"; shift 2 ;;
     --tags) custom_tags="$2"; shift 2 ;;
+    -H|--host-label) server_label="$2"; shift 2 ;;
     -h|--help) usage; exit 0 ;;
     --) shift; break ;;
-    *) echo "Unknown option: $1" >&2; usage; exit 1 ;;
+    -*) echo "Unknown option: $1" >&2; usage; exit 1 ;;
+    *)
+      # First bare word before '--' is treated as the server label (e.g., gpu01)
+      if [[ -z "${server_label}" ]]; then
+        server_label="$1"
+        shift
+      else
+        echo "Unknown argument: $1" >&2
+        usage
+        exit 1
+      fi
+      ;;
   esac
 done
 
@@ -91,15 +115,20 @@ start_iso=$(date -Iseconds)
 # Build titles and tags
 cmd_pretty="$*"
 title_base="${custom_title:-Job}"
-title_start="${title_base} ▶️ START"
-title_ok="${title_base} ✅ DONE"
-title_ng="${title_base} ❌ FAILED"
+title_prefix=""
+if [[ -n "${server_label}" ]]; then
+  title_prefix="[${server_label}] "
+fi
+title_start="${title_prefix}${title_base} ▶️ START"
+title_ok="${title_prefix}${title_base} ✅ DONE"
+title_ng="${title_prefix}${title_base} ❌ FAILED"
 tags_start="${custom_tags:+${custom_tags},}rocket,hourglass"
 tags_ok="${custom_tags:+${custom_tags},}white_check_mark"
 tags_ng="${custom_tags:+${custom_tags},}x,cross_mark"
 
 # Send START
 body_start=$(cat <<EOF
+server: ${server_label:-}
 host: ${host}
 container: ${container}
 user: ${user}
@@ -135,6 +164,7 @@ elapsed_fmt=$(printf "%d:%02d:%02d" "$h" "$m" "$s")
 
 if [[ $status -eq 0 ]]; then
   body_ok=$(cat <<EOF
+server: ${server_label:-}
 host: ${host}
 container: ${container}
 user: ${user}
@@ -150,6 +180,7 @@ EOF
   exit 0
 else
   body_ng=$(cat <<EOF
+server: ${server_label:-}
 host: ${host}
 container: ${container}
 user: ${user}
