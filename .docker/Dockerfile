@@ -33,8 +33,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     libsndfile1-dev \
     libgl1 \
-    netcdf-bin && \
-    rm -rf /var/lib/apt/lists/*
+    netcdf-bin \
+    chromium-chromedriver \
+    chromium-browser \
+    fonts-ipafont-gothic \
+    libgbm-dev \
+    libasound2 \
+ && rm -rf /var/lib/apt/lists/*
+
+# OS の CA バンドルを Requests が使えるよう既定パスを明示（コード側では優先は certifi）
+ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
 # 3. CPUアーキテクチャを自動判別し、適切なMinicondaをインストール
 #    ビルド時のターゲットプラットフォーム（例: linux/amd64, linux/arm64）に基づいて、
@@ -70,6 +78,8 @@ RUN echo "==> Removing all existing conda environments..." && \
 COPY environments /app/environments
 RUN find /app/environments -name "*.yml" -print0 | xargs -0 -I {} bash -c \
     'echo "Creating/updating env from {}" && conda env update --file {} --prune'
+
+RUN conda run -n scraping_env python -m playwright install --with-deps chromium
 
 # (ステップ2) GPUが有効な場合のみ、GPU用の環境で上書き更新 (environments_gpu/*.yml)
 ARG GPU_ENABLED=false

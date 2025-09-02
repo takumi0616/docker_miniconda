@@ -1,0 +1,19 @@
+name: scraping_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - beautifulsoup4
+  - lxml
+  - requests
+  - urllib3
+  - tqdm
+  - certifi # CAバンドル
+  - openssl # TLSスタック
+  - pip
+  - pip:
+      - python-dotenv
+      - selenium
+      - webdriver-manager
+      - playwright # 任意の代替手段（使う場合は 'playwright install chromium' が必要）
