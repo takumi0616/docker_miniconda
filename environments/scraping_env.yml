@@ -9,6 +9,7 @@ dependencies:
   - requests
   - urllib3
   - tqdm
+  - pillow
   - certifi # CAバンドル
   - openssl # TLSスタック
   - pip
