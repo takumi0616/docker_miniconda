@@ -39,3 +39,5 @@ dependencies:
       - numba
       - nvitop
       - imageio-ffmpeg
+      - ema-pytorch
+      - accelerate
