@@ -18,3 +18,4 @@ dependencies:
       - selenium
       - webdriver-manager
       - playwright # 任意の代替手段（使う場合は 'playwright install chromium' が必要）
+      - img2pdf
