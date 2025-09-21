@@ -1,6 +1,7 @@
 # compose.gpu.yml
 # GPU環境用の上書き設定ファイル
 # 実行コマンド: PYTORCH_CUDA_VERSION=12.4 docker compose -f compose.yml -f compose.gpu.yml up -d --build
+# 使用予定のサーバー名: gpu01, gpu02, wsl-ubuntu, via-tml2, tml-01-h100
 
 services:
   app:
@@ -8,15 +9,22 @@ services:
       # build.argsをGPU用の値で上書き
       args:
         # 1. 使用したいベースイメージを選択
+
+        # gpu01
         # - BASE_IMAGE=nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04
         # PYTORCH_CUDA_VERSION=12.1 sudo docker compose -f compose.yml -f compose.gpu.yml build --progress=plain
 
+        # wsl-ubuntu, mac, via-tml2
         - BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
         # PYTORCH_CUDA_VERSION=12.4 sudo docker compose -f compose.yml -f compose.gpu.yml build --progress=plain
 
-        # 1. 使用したいベースイメージを選択 (gpu02などで12.8を使う場合)
+        # gpu02
         # - BASE_IMAGE=nvidia/cuda:12.8.0-cudnn-devel-ubuntu22.04
         # PYTORCH_CUDA_VERSION=12.8 sudo docker compose -f compose.yml -f compose.gpu.yml build --progress=plain
+
+        # tml-01-h100
+        # - BASE_IMAGE=nvidia/cuda:13.0.0-cudnn-devel-ubuntu22.04
+        # PYTORCH_CUDA_VERSION=13.0 sudo docker compose -f compose.yml -f compose.gpu.yml build --progress=plain
 
         # 2. GPUを有効化
         - GPU_ENABLED=true
