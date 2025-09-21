@@ -14,7 +14,7 @@ services:
         # - BASE_IMAGE=nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04
         # PYTORCH_CUDA_VERSION=12.1 sudo docker compose -f compose.yml -f compose.gpu.yml build --progress=plain
 
-        # wsl-ubuntu, mac, via-tml2
+        # wsl-ubuntu, via-tml2
         - BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
         # PYTORCH_CUDA_VERSION=12.4 sudo docker compose -f compose.yml -f compose.gpu.yml build --progress=plain
 

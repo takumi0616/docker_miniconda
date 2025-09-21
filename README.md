@@ -369,6 +369,8 @@ sudo chown -R devel:devel /home/devel/work_takasuka_git/docker_miniconda/src
 sudo chown -R takumi:takumi /home/takumi/docker_miniconda/src
 
 sudo chown -R devel:devel /home/devel/work_takasuka/docker_miniconda/src
+
+sudo chown -R takumi0616:takumi0616 /home/takumi0616/docker_miniconda/src 
 ```
 
 gpu チェック
@@ -502,6 +504,7 @@ ln -s /mnt/gpu01C/devel/work_takasuka_git/docker_miniconda/src/anemoi /home/deve
 - notify-run/notify_job は自動で以下を付与：
   - START ▶️, DONE ✅, FAILED ❌
   - タグ: rocket/hourglass/white_check_mark/x など
+  - 本文には以下のコンテキストを含めて送信します: host, container, user, conda, cwd(実行ディレクトリ), cmd, start/end(ISO8601), elapsed(H:MM:SS), exit_code, log(指定時)
 - iOS の ntfy アプリではタグがアイコンに反映される
 
 ## チェック

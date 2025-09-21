@@ -26,4 +26,6 @@ src/*
 !src/check_gpu_torch.py
 !src/check_cpu.py
 !src/check_cupy.py
+!src/ntfy_notify.py
+
 .env

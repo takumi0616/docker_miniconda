@@ -109,6 +109,7 @@ host="${HOST_HOSTNAME:-$(hostname -f 2>/dev/null || hostname || echo unknown-hos
 container="${HOSTNAME:-unknown-container}"
 user="${USER:-root}"
 conda_env="${CONDA_DEFAULT_ENV:-none}"
+cwd="$(pwd)"
 start_ts=$(date +%s)
 start_iso=$(date -Iseconds)
 
@@ -133,6 +134,7 @@ host: ${host}
 container: ${container}
 user: ${user}
 conda: ${conda_env}
+cwd: ${cwd}
 start: ${start_iso}
 cmd: ${cmd_pretty}
 EOF
@@ -169,6 +171,7 @@ host: ${host}
 container: ${container}
 user: ${user}
 conda: ${conda_env}
+cwd: ${cwd}
 end: ${end_iso}
 elapsed: ${elapsed_fmt}
 exit_code: 0
@@ -185,6 +188,7 @@ host: ${host}
 container: ${container}
 user: ${user}
 conda: ${conda_env}
+cwd: ${cwd}
 end: ${end_iso}
 elapsed: ${elapsed_fmt}
 exit_code: ${status}

@@ -1,0 +1,67 @@
+name: llm_env
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  # PyTorch + CUDA
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=12.4
+  # Common scientific stack
+  - numpy
+  - pandas
+  - scipy
+  - pyarrow
+  - protobuf
+  - einops
+  - scikit-learn
+  - pyyaml
+  - requests
+  - tensorboard
+  - matplotlib
+  - seaborn
+  - xarray
+  - netcdf4
+  - omegaconf
+  - rich
+  # Hugging Face / LLM tooling
+  - tokenizers
+  - sentencepiece
+  - accelerate
+  - datasets
+  - safetensors
+  - huggingface_hub
+  - tqdm
+  - psutil
+  - pip
+  - pip:
+      # transformers を最新（main）に追従（DynamicCache等の修正を取り込む目的）
+      - git+https://github.com/huggingface/transformers.git@main
+      - trl
+      - evaluate
+      - peft
+      - optimum
+      - gradio
+      - tiktoken
+      - hf-transfer
+      - nvitop
+      - bitsandbytes
+      - sacrebleu
+      - rouge-score
+      - bert-score
+      - fugashi[unidic-lite]
+      - sentence-transformers
+      - faiss-cpu
+      - langchain
+      - chromadb
+      - wandb
+      - fastapi
+      - uvicorn
+      # 任意（量子化やGPU最適化に利用。ビルド不可の場合は削除してOK）
+      # - xformers
+      # - bitsandbytes
+      # - flash-attn
