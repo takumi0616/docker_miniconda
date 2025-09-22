@@ -360,7 +360,7 @@ sudo docker builder prune
 ユーザー権限の譲渡
 
 ```bash
-sudo chown -R $USER:$USER /home/takumi/docker_miniconda/src/FrontLine/
+sudo chown -R $USER:$USER /home/takumi/docker_miniconda/src/
 
 sudo chown -R s233319:s233319 /home/s233319/docker_miniconda/src
 
