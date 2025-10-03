@@ -39,6 +39,7 @@ dependencies:
   - psutil
   - pip
   - pip:
+      - PyPDF2
       # transformers を最新（main）に追従（DynamicCache等の修正を取り込む目的）
       - git+https://github.com/huggingface/transformers.git@main
       - trl
