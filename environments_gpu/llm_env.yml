@@ -65,6 +65,7 @@ dependencies:
       - fastapi
       - uvicorn
       - openai
+      - nltk
       # 任意（量子化やGPU最適化に利用。ビルド不可の場合は削除してOK）
       # - xformers
       # - bitsandbytes

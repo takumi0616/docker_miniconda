@@ -36,3 +36,4 @@ dependencies:
       - scipy
       - numba
       - imageio-ffmpeg
+      - nltk
