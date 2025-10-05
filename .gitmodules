@@ -1,0 +1,18 @@
+[submodule "src/CompresionRain"]
+	path = src/CompresionRain
+	url = git@github.com:takumi0616/CompresionRain.git
+[submodule "src/FrontLine"]
+	path = src/FrontLine
+	url = git@github.com:takumi0616/FrontLine.git
+[submodule "src/PressurePattern"]
+	path = src/PressurePattern
+	url = git@github.com:takumi0616/PressurePattern.git
+[submodule "src/WeatherLLM"]
+	path = src/WeatherLLM
+	url = git@github.com:takumi0616/WeatherLLM.git
+[submodule "src/TyphoonForecast"]
+	path = src/TyphoonForecast
+	url = git@github.com:takumi0616/TyphoonForecast.git
+[submodule "src/AWCGS"]
+	path = src/AWCGS
+	url = git@github.com:takumi0616/AWCGS.git
