@@ -20,7 +20,7 @@ __pycache__/
 Thumbs.db
 
 # Ignore all files in src directory
-src/*
+src/assignment
 
 # But do NOT ignore (re-include) check_gpu_torch.py
 !src/check_gpu_torch.py
