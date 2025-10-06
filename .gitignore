@@ -23,6 +23,7 @@ Thumbs.db
 src/assignment
 src/anemoi
 src/Front
+src/Scraping
 
 # But do NOT ignore (re-include) check_gpu_torch.py
 !src/check_gpu_torch.py
