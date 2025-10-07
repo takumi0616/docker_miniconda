@@ -370,7 +370,7 @@ sudo chown -R takumi:takumi /home/takumi/docker_miniconda/src
 
 sudo chown -R devel:devel /home/devel/work_takasuka/docker_miniconda/src
 
-sudo chown -R takumi0616:takumi0616 /home/takumi0616/docker_miniconda/src 
+sudo chown -R takumi0616:takumi0616 /home/takumi0616/docker_miniconda/src
 ```
 
 gpu チェック
@@ -511,4 +511,15 @@ ln -s /mnt/gpu01C/devel/work_takasuka_git/docker_miniconda/src/anemoi /home/deve
 
 ```bash
 notify-run -- python ntfy_notify.py
+```
+
+```bash
+chmod +x fa.sh
+
+./fa.sh
+```
+
+```bash
+chmod +x oc.sh
+./oc.sh
 ```
