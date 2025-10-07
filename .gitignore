@@ -25,6 +25,13 @@ src/anemoi
 src/Front
 src/Scraping
 
+src/FrontLine
+src/CompressionRain
+src/PressurePattern
+src/WeatherLLM
+src/TyphoonForecast
+src/AWCGS
+
 # But do NOT ignore (re-include) check_gpu_torch.py
 !src/check_gpu_torch.py
 !src/check_cpu.py
