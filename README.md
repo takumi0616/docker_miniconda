@@ -514,12 +514,11 @@ notify-run -- python ntfy_notify.py
 ```
 
 ```bash
-chmod +x fa.sh
-
-./fa.sh
+chmod +x fetch.sh
+./fetch.sh
 ```
 
 ```bash
-chmod +x oc.sh
-./oc.sh
+chmod +x open.sh
+./open.sh
 ```
