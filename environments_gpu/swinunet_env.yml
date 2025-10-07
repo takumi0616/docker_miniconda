@@ -30,6 +30,7 @@ dependencies:
   - h5netcdf
   - hdf5plugin
   - imageio
+  - pygrib
   - pip
   - pip:
       - japanize-matplotlib
