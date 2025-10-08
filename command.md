@@ -68,6 +68,14 @@ CUDA_BASE_IMAGE="nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04" PYTORCH_CUDA_VERSI
 CUDA_BASE_IMAGE="nvidia/cuda:12.8.0-cudnn-devel-ubuntu22.04" PYTORCH_CUDA_VERSION=12.8 sudo docker compose -f compose.yml -f compose.gpu.yml build
 ```
 
+- gpu02 の GPU 解放
+
+```bash
+pip uninstall torch torchvision torchaudio
+
+pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
+```
+
 - tml-01-h100 (CUDA 13.0)
 
 ```bash
@@ -156,14 +164,6 @@ sudo chown -R devel:devel /home/devel/work_takasuka_git/docker_miniconda/src
 
 ```bash
 sudo chown -R takumi:takumi /home/takumi/docker_miniconda/src
-```
-
-- gpu02 の GPU 解放
-
-```bash
-pip uninstall torch torchvision torchaudio
-
-pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
 ```
 
 # Git 設定
