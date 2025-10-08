@@ -1,30 +1,32 @@
 # compose.gpu.yml
 # GPU環境用の上書き設定ファイル
-# 実行コマンド: PYTORCH_CUDA_VERSION=12.4 docker compose -f compose.yml -f compose.gpu.yml up -d --build
-# 使用予定のサーバー名: gpu01, gpu02, wsl-ubuntu, via-tml2, tml-01-h100
+#
+# --- サーバー別ビルドコマンド ---
+# 以下のコマンドをサーバーに応じて実行してください。(ymlファイルの編集は不要です)
+#
+# ▼ gpu01 (CUDA 12.1)
+# CUDA_BASE_IMAGE="nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04" PYTORCH_CUDA_VERSION=12.1 sudo docker compose -f compose.yml -f compose.gpu.yml build
+#
+# ▼ gpu02 (CUDA 12.8)
+# CUDA_BASE_IMAGE="nvidia/cuda:12.8.0-cudnn-devel-ubuntu22.04" PYTORCH_CUDA_VERSION=12.8 sudo docker compose -f compose.yml -f compose.gpu.yml build
+#
+# ▼ wsl-ubuntu, via-tml2 (CUDA 12.4 - デフォルト)
+# PYTORCH_CUDA_VERSION=12.4 sudo docker compose -f compose.yml -f compose.gpu.yml build
+#
+# ▼ tml-01-h100 (CUDA 13.0)
+# CUDA_BASE_IMAGE="nvidia/cuda:13.0.0-cudnn-devel-ubuntu22.04" PYTORCH_CUDA_VERSION=13.0 sudo docker compose -f compose.yml -f compose.gpu.yml build
+#
+# 起動コマンドは `build` を `up -d` に置き換えてください。
+# 例: CUDA_BASE_IMAGE="..." PYTORCH_CUDA_VERSION=... sudo docker compose -f compose.yml -f compose.gpu.yml up -d
 
 services:
   app:
     build:
       # build.argsをGPU用の値で上書き
       args:
-        # 1. 使用したいベースイメージを選択
-
-        # gpu01
-        # - BASE_IMAGE=nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04
-        # PYTORCH_CUDA_VERSION=12.1 sudo docker compose -f compose.yml -f compose.gpu.yml build --progress=plain
-
-        # wsl-ubuntu, via-tml2
-        - BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
-        # PYTORCH_CUDA_VERSION=12.4 sudo docker compose -f compose.yml -f compose.gpu.yml build --progress=plain
-
-        # gpu02
-        # - BASE_IMAGE=nvidia/cuda:12.8.0-cudnn-devel-ubuntu22.04
-        # PYTORCH_CUDA_VERSION=12.8 sudo docker compose -f compose.yml -f compose.gpu.yml build --progress=plain
-
-        # tml-01-h100
-        # - BASE_IMAGE=nvidia/cuda:13.0.0-cudnn-devel-ubuntu22.04
-        # PYTORCH_CUDA_VERSION=13.0 sudo docker compose -f compose.yml -f compose.gpu.yml build --progress=plain
+        # 1. 環境変数 `CUDA_BASE_IMAGE` からベースイメージを動的に受け取る
+        #    変数が指定されない場合のデフォルト値として、wsl-ubuntu等で使うCUDA 12.4.1のイメージを指定
+        - BASE_IMAGE=${CUDA_BASE_IMAGE:-nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04}
 
         # 2. GPUを有効化
         - GPU_ENABLED=true
