@@ -42,8 +42,8 @@ dependencies:
       - PyPDF2
       - pdfminer.six
       - pymupdf
-      # transformers を最新（main）に追従（DynamicCache等の修正を取り込む目的）
-      - git+https://github.com/huggingface/transformers.git@main
+      - transformers>=4.3.4
+      - sentence-transformers==5.1.1
       - trl
       - evaluate
       - peft
@@ -57,7 +57,6 @@ dependencies:
       - rouge-score
       - bert-score
       - fugashi[unidic-lite]
-      - sentence-transformers
       - faiss-cpu
       - langchain
       - chromadb
@@ -66,7 +65,3 @@ dependencies:
       - uvicorn
       - openai
       - nltk
-      # 任意（量子化やGPU最適化に利用。ビルド不可の場合は削除してOK）
-      # - xformers
-      # - bitsandbytes
-      # - flash-attn
