@@ -59,13 +59,13 @@ PYTORCH_CUDA_VERSION=12.4 sudo docker compose -f compose.yml -f compose.gpu.yml 
 - gpu01 (CUDA 12.1)
 
 ```bash
-CUDA_BASE_IMAGE="nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04" PYTORCH_CUDA_VERSION=12.1 sudo docker compose -f compose.yml -f compose.gpu.yml build
+export CUDA_BASE_IMAGE="nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04" && export PYTORCH_CUDA_VERSION=12.1 && sudo -E docker compose -f compose.yml -f compose.gpu.yml build --no-cache && sudo -E docker compose -f compose.yml -f compose.gpu.yml up -d
 ```
 
 - gpu02 (CUDA 12.8)
 
 ```bash
-CUDA_BASE_IMAGE="nvidia/cuda:12.8.0-cudnn-devel-ubuntu22.04" PYTORCH_CUDA_VERSION=12.8 sudo docker compose -f compose.yml -f compose.gpu.yml build
+export CUDA_BASE_IMAGE="nvidia/cuda:12.8.0-cudnn-devel-ubuntu22.04" && export PYTORCH_CUDA_VERSION=12.8 && sudo -E docker compose -f compose.yml -f compose.gpu.yml build --no-cache && sudo -E docker compose -f compose.yml -f compose.gpu.yml up -d
 ```
 
 - gpu02 の GPU 解放
