@@ -25,6 +25,7 @@ src/anemoi
 src/Front
 src/Scraping
 src/ollama-open-webui
+src/work_research
 
 src/FrontLine
 src/CompresionRain
