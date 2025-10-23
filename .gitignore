@@ -24,6 +24,7 @@ src/assignment
 src/anemoi
 src/Front
 src/Scraping
+src/ollama-open-webui
 
 src/FrontLine
 src/CompresionRain
@@ -39,4 +40,3 @@ src/AWCGS
 !src/ntfy_notify.py
 
 .env
-ollama-open-webui/
