@@ -89,7 +89,7 @@ RUN if [ "${GPU_ENABLED}" = "true" ]; then \
         echo "==> Templating Conda GPU environments with CUDA version: ${PYTORCH_CUDA_VERSION}" && \
         # sed の置換（GNU sed）。\S は使えないため [0-9.]+ に変更
         find /app/environments_gpu -name "*.yml" -exec \
-            sed -E -i "s/pytorch-cuda=[0-9.]+/pytorch-cuda=${PYTORCH_CUDA_VERSION}/g" {} + && \
+            sed -E -i "s/pytorch-cuda=[0-9.]+/pytorch-cuda=${PYTORCH_CUDA_VERSION}/g; s/cuda-version=[0-9.]+/cuda-version=${PYTORCH_CUDA_VERSION}/g" {} + && \
         \
         for ENV_FILE in $(find /app/environments_gpu -name "*.yml"); do \
             echo "--> Attempting to create/update Conda environment from ${ENV_FILE}"; \
@@ -100,6 +100,22 @@ RUN if [ "${GPU_ENABLED}" = "true" ]; then \
             }; \
             echo "--> Successfully processed ${ENV_FILE}"; \
         done; \
+        \
+        # --- Install JAX CUDA plugin into aimodel_env (based on PYTORCH_CUDA_VERSION) ---
+        # JAX の pip パッケージは v0.6 系で cuda12 プラグインが提供されており、
+        # CUDA 12.x 系および 13.x でも 'cuda12' を使うのが現状の安定解です。
+        # （NVIDIA ドライバが新しければ後方互換で動作）                          \
+        JAX_CUDA_EXTRA="cuda12"; \
+        MAJOR_VER="${PYTORCH_CUDA_VERSION%%.*}"; \
+        if [ "${MAJOR_VER}" = "12" ] || [ "${MAJOR_VER}" = "13" ]; then \
+          echo "==> Installing jax[${JAX_CUDA_EXTRA}] for CUDA ${PYTORCH_CUDA_VERSION} (aimodel_env)"; \
+          conda run -n aimodel_env python -V && \
+          conda run -n aimodel_env pip install -U "jax[${JAX_CUDA_EXTRA}]"; \
+        else \
+          echo "WARN: Unsupported CUDA version ${PYTORCH_CUDA_VERSION}; fallback to jax[cuda12]" && \
+          conda run -n aimodel_env pip install -U "jax[cuda12]"; \
+        fi; \
+        \
         echo "==> Cleaning up Conda cache" && \
         conda clean -a -y; \
     fi

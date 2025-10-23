@@ -1,0 +1,47 @@
+# environments_gpu/aimodel_env.yml
+name: aimodel_env
+channels:
+  - conda-forge
+  - nvidia
+  - defaults
+
+dependencies:
+  # Python ランタイム
+  - python=3.10
+
+  # GraphCast が利用する JAX エコシステム（本体 JAX は pip 側で導入）
+  - dm-haiku # Haiku (DeepMind)
+  - chex
+  - jraph
+
+  # 科学技術計算スタック
+  - numpy
+  - scipy
+  - pandas
+  - xarray
+  - netcdf4
+  - h5py
+  - h5netcdf
+  - dask
+
+  # 補助ライブラリ
+  - matplotlib
+  - trimesh
+  - rtree               # trimesh.proximity で最近傍探索を使う際に必須
+  - libspatialindex     # rtree の依存（conda-forge 提供）
+  - dm-tree             # import 名は 'tree'（xarray_jax 内で使用）
+  - psutil
+  - requests
+
+  # GCS からの匿名ダウンロードに必要
+  - google-cloud-storage
+  - google-auth
+  - google-api-core
+
+  # pip パッケージ（最小限）
+  - pip
+  - pip:
+      - absl-py
+      # まずは CPU 版 jax を導入（環境解決エラーを避けるため）
+      # GPU を使う場合は起動後に上記コメントの jax[cuda12_local] を追加でインストールしてください
+      - jax==0.4.31
