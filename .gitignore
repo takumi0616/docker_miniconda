@@ -39,3 +39,4 @@ src/AWCGS
 !src/ntfy_notify.py
 
 .env
+ollama-open-webui/
