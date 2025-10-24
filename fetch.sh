@@ -7,7 +7,7 @@ echo "Fetching docker_miniconda..."
 git fetch
 
 # 各サブリポジトリ
-for repo in CompresionRain FrontLine PressurePattern WeatherLLM TyphoonForecast AWCGS; do
+for repo in CompresionRain FrontLine PressurePattern WeatherLLM TyphoonForecast AWCGS 3D_avatars; do
     if [ -d "src/$repo/.git" ]; then
         echo "Fetching $repo..."
         cd "src/$repo"

@@ -10,6 +10,7 @@ projects=(
     "PressurePattern"
     "TyphoonForecast"
     "WeatherLLM"
+    "3D_avatars"
 )
 
 # 各プロジェクトの主要ファイルを開く
