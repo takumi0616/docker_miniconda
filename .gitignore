@@ -33,6 +33,7 @@ src/PressurePattern
 src/WeatherLLM
 src/TyphoonForecast
 src/AWCGS
+src/3D_avatars
 
 # But do NOT ignore (re-include) check_gpu_torch.py
 !src/check_gpu_torch.py
