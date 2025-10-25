@@ -1,0 +1,66 @@
+# environments_gpu/avater_env.yml
+# -----------------------------------------------------------------------------
+# 目的:
+# - src/3D_avatars/run_Audio2Face.py を GPU/CPU 両対応で実行するための最小〜実用的な Conda 環境
+# - GUI なし（X/Wayland 不要）・オフラインでもできるだけ動くよう、画像生成/動画化/音声読込の依存を網羅
+# - PyTorch CUDA 版を前提（pytorch-cuda=12.4 は Dockerfile の sed により PYTORCH_CUDA_VERSION に置換されます）
+#
+# 想定:
+# - サーバー: NVIDIA A2 / Driver 560.35.05 / CUDA 12.6（例）
+# - Docker: compose.gpu.yml 経由で GPU 有効。build 引数 PYTORCH_CUDA_VERSION=12.6 等でバージョン切替
+# - 本 env は run_Audio2Face.py の「--device auto/cuda/cpu」すべてに対応
+#
+# 補足:
+# - 画像合成/動画出力:
+#     - OpenCV(cv2) で PNG/MP4 を生成（mp4v）。FFmpeg 連携のため ffmpeg も conda で導入
+#     - imageio + imageio-ffmpeg も導入（cv2 が無い場合のフォールバック）
+# - 音声読込:
+#     - pysoundfile(=soundfile) または scipy.io.wavfile のどちらでも読めるよう両方導入
+# - PIL(Pillow) は cv2 不在時の描画フォールバックに利用
+# - NumPy は各種処理の基盤
+#
+# 使用例:
+#   conda activate avater_env
+#   python src/3D_avatars/run_Audio2Face.py --device auto
+#
+# 将来拡張:
+# - 本物の NVIDIA A2F-3D NIM 接続（gRPC クライアント）を追加する際も、この env をそのまま流用可能
+#   （必要に応じて grpcio/protobuf 等を追加）
+# -----------------------------------------------------------------------------
+
+name: avater_env
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+
+dependencies:
+  # Python ランタイム
+  - python=3.11
+
+  # PyTorch + CUDA（Dockerfile の sed により pytorch-cuda=12.4 は指定版へ置換されます）
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=12.4
+
+  # 科学技術/画像/音声処理スタック
+  - numpy
+  - pillow
+  - opencv
+  - imageio
+  - imageio-ffmpeg
+  - scipy
+  - pysoundfile     # conda-forge の soundfile パッケージ名
+
+  # 補助
+  - ffmpeg          # OpenCV の mp4 書き出しで必要になる場合がある
+  - psutil
+  - tqdm
+  - pip
+
+  # pip パッケージ（必要になった場合のみ追加してください）
+  - pip:
+      - grpcio         # 将来 NIM の gRPC クライアントを実装する場合
+      - protobuf       # 同上
