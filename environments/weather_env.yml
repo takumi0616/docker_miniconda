@@ -37,3 +37,6 @@ dependencies:
       - numba
       - imageio-ffmpeg
       - nltk
+      - requests
+      - beautifulsoup4
+      - xmltodict

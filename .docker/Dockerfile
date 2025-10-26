@@ -18,6 +18,8 @@ WORKDIR /app
 #    開発に必要な様々なツールやライブラリ（wget, git, vimなど）をインストールします。
 #    インストールの最後にaptキャッシュをクリーンアップし、イメージサイズを最適化します。
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    locales \
+    language-pack-ja \
     wget \
     bzip2 \
     build-essential \
@@ -39,10 +41,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     fonts-ipafont-gothic \
     libgbm-dev \
     libasound2 \
- && rm -rf /var/lib/apt/lists/*
+ && locale-gen ja_JP.UTF-8 && update-locale LANG=ja_JP.UTF-8 LC_ALL=ja_JP.UTF-8 && \
+    rm -rf /var/lib/apt/lists/*
 
 # OS の CA バンドルを Requests が使えるよう既定パスを明示（コード側では優先は certifi）
 ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+# Locale and I/O encoding defaults (avoid mojibake in CLI/PIPEs)
+ENV LANG=ja_JP.UTF-8 \
+    LANGUAGE=ja_JP:ja \
+    LC_ALL=ja_JP.UTF-8 \
+    PYTHONIOENCODING=UTF-8
 
 # 3. CPUアーキテクチャを自動判別し、適切なMinicondaをインストール
 #    ビルド時のターゲットプラットフォーム（例: linux/amd64, linux/arm64）に基づいて、
