@@ -1,0 +1,65 @@
+name: tts_env
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+
+dependencies:
+  # Python
+  - python=3.11
+
+  # PyTorch GPU stack (CUDA 12.4)
+  # Torch 2.6+ は .bin 読み込みのセキュリティ要件（CVE-2025-32434）を満たすため必須
+  - pytorch=2.6.*
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=12.4
+
+  # 科学技術/画像/音声処理スタック（avater_env を統合）
+  - numpy
+  - pandas
+  - scipy
+  - pillow
+  - opencv
+  - imageio
+  - imageio-ffmpeg
+  - pysoundfile # conda-forge の soundfile パッケージ名
+
+  # Hugging Face / TTS ツール群
+  - sentencepiece
+  - tokenizers
+  - safetensors
+  - accelerate
+  - datasets
+  - huggingface_hub
+  - einops
+
+  # 補助
+  - pyyaml
+  - requests
+  - protobuf
+  - tqdm
+  - psutil
+  - ffmpeg
+  - pip
+
+  # pip パッケージ
+  - pip:
+      # Parler / Bark / MMS / SpeechT5 などの最新 TTS サポート
+      - "transformers>=4.46.0"
+      # 大容量モデルDLの高速化
+      - hf-transfer
+      # 将来の A2F-3D NIM gRPC クライアント実装を想定（avater_env より統合）
+      - grpcio
+      # Local TTS backends and helpers
+      - encodec
+      # pyopenjtalk は C拡張のため NumPy ABI との互換が必要
+      # 既知の安定版に固定して numpy=1.26.* / scipy=1.11.* と揃える
+      - pyopenjtalk-prebuilt>=0.3.0
+      - pyopenjtalk
+      - onnxruntime-gpu
+      # Parler-TTS library (for Japanese Parler large-bate)
+      - git+https://github.com/huggingface/parler-tts.git
+      # RubyInserter for Japanese reading (optional, used if available)
+      - git+https://github.com/getuka/RubyInserter.git

@@ -1,0 +1,68 @@
+# VOICEVOX ENGINE 専用 GPU 環境
+# 目的:
+# - src/3D_avatars/voicebox/voicevox_engine を Python のみで起動・利用するための最小構成
+# - run_voicevox.py で HTTP API(audio_query → synthesis) を叩き、wav を生成
+#
+# 重要な注意・既知の競合:
+# - Python バージョン: ENGINE 側は "==3.11.9" を明示。ここでは 3.11.9 を固定。
+# - NumPy バージョン: ENGINE は numpy>=2.2.* を要求します。
+#   tts_env で利用例のある "pyopenjtalk-prebuilt" は numpy=1.26.* を前提にしており衝突します。
+#   → 本環境では "pyopenjtalk-prebuilt" を入れず、VOICEVOX が pin している Git リビジョンの pyopenjtalk を使用します。
+# - soundfile について:
+#   conda パッケージ名は "pysoundfile"（Python import 名は soundfile）。pip の "soundfile" を重ねて入れないでください（重複・上書きの恐れ）。
+# - GPU/CUDA まわり:
+#   VOICEVOX CORE の GPU 版を使う場合は CUDA/cuDNN/ONNX Runtime の共有ライブラリが必要です。
+#   便宜上 pip の "onnxruntime-gpu" を入れていますが、環境の CUDA バージョンと合致しないと読み込みに失敗します。
+#   PyTorch 系スタック（pytorch-cuda 等）と同居させる場合は CUDA のバージョン整合に注意してください。
+#   本環境は PyTorch を含めていません。必要なら tts_env など別envと用途分離を推奨します。
+#
+# 実運用メモ:
+# - VOICEVOX CORE を利用する場合は run_voicevox.py の "--voicelib-dir" / "--runtime-dir" に
+#   この環境の site-packages 内の onnxruntime 共有ライブラリディレクトリなどを明示することで解決が安定します。
+# - Git リビジョン指定の pyopenjtalk は、環境によってはビルドが走る場合があります。多くのLinuxではホイールが拾えるはずですが、
+#   ビルドになる場合に備えて "cmake" を同梱しています（コンパイラ類が必要になるケースはOS側依存です）。
+name: voicebox_env
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+
+dependencies:
+  # Python
+  - python=3.11.9
+
+  # 数値計算
+  - numpy=2.2.*
+
+  # オーディオ I/O（Python import 名は soundfile）
+  - pysoundfile
+
+  # 補助
+  - pyyaml
+  - requests
+  - jinja2
+  - tqdm
+  - cmake
+  - pip
+
+  # pip パッケージ（ENGINE requirements に準拠）
+  - pip:
+      # Web サーバ/依存
+      - fastapi-slim==0.115.12
+      - starlette==0.45.3
+      - uvicorn==0.34.0
+      - pydantic==2.11.3
+      - python-multipart==0.0.20
+      # テキスト・音声処理
+      - pyworld==0.3.5
+      - soxr==0.5.0.post1
+      - kanalizer==0.1.1
+      # ユーティリティ
+      - platformdirs==4.3.7
+      - semver==3.0.4
+      - typing-inspection==0.4.0
+      # VOICEVOX が pin している pyopenjtalk の Git リビジョン（numpy 2.x 系と両立）
+      - git+https://github.com/VOICEVOX/pyopenjtalk@74703b034dd90a1f199f49bb70bf3b66b1728a86
+      # Optional: GPU 版 ONNX Runtime（CORE GPU 版をこのenvに収めたい場合）
+      - onnxruntime-gpu
