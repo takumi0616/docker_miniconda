@@ -33,6 +33,8 @@ dependencies:
   - psutil
   - requests
   - pygrib
+  - dinosaur
+  - tqdm
 
   # GCS からの匿名ダウンロードに必要
   - google-cloud-storage
