@@ -27,11 +27,12 @@ dependencies:
   # 補助ライブラリ
   - matplotlib
   - trimesh
-  - rtree               # trimesh.proximity で最近傍探索を使う際に必須
-  - libspatialindex     # rtree の依存（conda-forge 提供）
-  - dm-tree             # import 名は 'tree'（xarray_jax 内で使用）
+  - rtree # trimesh.proximity で最近傍探索を使う際に必須
+  - libspatialindex # rtree の依存（conda-forge 提供）
+  - dm-tree # import 名は 'tree'（xarray_jax 内で使用）
   - psutil
   - requests
+  - pygrib
 
   # GCS からの匿名ダウンロードに必要
   - google-cloud-storage
