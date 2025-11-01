@@ -48,3 +48,4 @@ dependencies:
       # まずは CPU 版 jax を導入（環境解決エラーを避けるため）
       # GPU を使う場合は起動後に上記コメントの jax[cuda12_local] を追加でインストールしてください
       - jax==0.4.31
+      - cdsapi
