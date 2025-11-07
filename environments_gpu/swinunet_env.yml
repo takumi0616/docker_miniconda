@@ -31,6 +31,7 @@ dependencies:
   - hdf5plugin
   - imageio
   - pygrib
+  - skimage
   - pip
   - pip:
       - japanize-matplotlib
