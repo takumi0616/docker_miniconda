@@ -33,7 +33,6 @@ dependencies:
   - psutil
   - requests
   - pygrib
-  - dinosaur
   - tqdm
 
   # GCS からの匿名ダウンロードに必要
@@ -49,3 +48,4 @@ dependencies:
       # GPU を使う場合は起動後に上記コメントの jax[cuda12_local] を追加でインストールしてください
       - jax==0.4.31
       - cdsapi
+      - dinosaur

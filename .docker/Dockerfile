@@ -10,6 +10,8 @@ FROM ${BASE_IMAGE}
 
 # 非対話型のインストール設定: apt-getなどのプロンプト表示を抑制します
 ENV DEBIAN_FRONTEND=noninteractive
+# APT network hardening: retries and timeouts
+RUN printf 'Acquire::Retries "5";\nAcquire::http::Timeout "60";\nAcquire::https::Timeout "60";\n' > /etc/apt/apt.conf.d/99network-retries
 
 # 作業ディレクトリを設定: コンテナ内の作業の基準となるディレクトリです
 WORKDIR /app
@@ -17,31 +19,41 @@ WORKDIR /app
 # 2. 共通のシステム依存関係をインストール
 #    開発に必要な様々なツールやライブラリ（wget, git, vimなど）をインストールします。
 #    インストールの最後にaptキャッシュをクリーンアップし、イメージサイズを最適化します。
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    locales \
-    language-pack-ja \
-    wget \
-    bzip2 \
-    build-essential \
-    git \
-    git-lfs \
-    curl \
-    htop \
-    nvtop \
-    vim \
-    tmux \
-    tree \
-    ncdu \
-    ca-certificates \
-    libsndfile1-dev \
-    libgl1 \
-    netcdf-bin \
-    chromium-chromedriver \
-    chromium-browser \
-    fonts-ipafont-gothic \
-    libgbm-dev \
-    libasound2 \
- && locale-gen ja_JP.UTF-8 && update-locale LANG=ja_JP.UTF-8 LC_ALL=ja_JP.UTF-8 && \
+RUN set -eux; \
+    SUCCESS=0; \
+    for i in 1 2 3 4 5; do \
+      if apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=60 -o Acquire::https::Timeout=60 update && \
+         apt-get install -y --no-install-recommends \
+           locales \
+           language-pack-ja \
+           wget \
+           bzip2 \
+           build-essential \
+           git \
+           git-lfs \
+           curl \
+           htop \
+           nvtop \
+           vim \
+           tmux \
+           tree \
+           ncdu \
+           ca-certificates \
+           libsndfile1-dev \
+           libgl1 \
+           netcdf-bin \
+           chromium-chromedriver \
+           chromium-browser \
+           fonts-ipafont-gothic \
+           libgbm-dev \
+           libasound2; then \
+         SUCCESS=1; break; \
+      else \
+         echo "APT failed (try $i/5)"; sleep $((i*10)); \
+      fi; \
+    done; \
+    if [ "$SUCCESS" -ne 1 ]; then echo "[ERROR] APT update/install failed after retries"; exit 1; fi; \
+    locale-gen ja_JP.UTF-8 && update-locale LANG=ja_JP.UTF-8 LC_ALL=ja_JP.UTF-8; \
     rm -rf /var/lib/apt/lists/*
 
 # OS の CA バンドルを Requests が使えるよう既定パスを明示（コード側では優先は certifi）
@@ -51,19 +63,32 @@ ENV LANG=ja_JP.UTF-8 \
     LANGUAGE=ja_JP:ja \
     LC_ALL=ja_JP.UTF-8 \
     PYTHONIOENCODING=UTF-8
+# pip network hardening: increase default timeout and disable version check
+ENV PIP_DEFAULT_TIMEOUT=120 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
 # 3. CPUアーキテクチャを自動判別し、適切なMinicondaをインストール
 #    ビルド時のターゲットプラットフォーム（例: linux/amd64, linux/arm64）に基づいて、
 #    適切なMinicondaインストーラーをダウンロードし、インストールします。
 ARG TARGETPLATFORM
 ENV CONDA_DIR /opt/conda
-RUN case ${TARGETPLATFORM} in \
+RUN set -eux; \
+    case ${TARGETPLATFORM} in \
         "linux/amd64") ARCH="x86_64";; \
         "linux/arm64") ARCH="aarch64";; \
         *) echo "Unsupported architecture: ${TARGETPLATFORM}"; exit 1;; \
-    esac && \
-    wget --quiet "https://repo.anaconda.com/miniconda/Miniconda3-py312_24.5.0-0-Linux-${ARCH}.sh" -O ~/miniconda.sh && \
-    /bin/bash ~/miniconda.sh -b -p $CONDA_DIR && \
+    esac; \
+    URL="https://repo.anaconda.com/miniconda/Miniconda3-py312_24.5.0-0-Linux-${ARCH}.sh"; \
+    for i in 1 2 3 4 5; do \
+      wget -O ~/miniconda.sh --progress=dot:giga --tries=3 --timeout=60 "$URL" && break || { \
+        echo "wget failed (try $i/5)"; sleep $((i*10)); \
+      }; \
+    done; \
+    if [ ! -s ~/miniconda.sh ]; then \
+      echo "Falling back to curl"; \
+      curl -fL "$URL" --retry 5 --retry-all-errors --connect-timeout 30 --max-time 600 -o ~/miniconda.sh; \
+    fi; \
+    /bin/bash ~/miniconda.sh -b -p $CONDA_DIR; \
     rm ~/miniconda.sh
 
 # PATH環境変数の設定
@@ -73,7 +98,9 @@ ENV PATH=$CONDA_DIR/bin:$PATH
 RUN conda config --set auto_activate_base false && \
     conda config --add channels conda-forge && \
     conda config --add channels pytorch && \
-    conda config --add channels nvidia
+    conda config --add channels nvidia && \
+    conda config --set remote_connect_timeout_secs 60 && \
+    conda config --set remote_read_timeout_secs 120
 
 # 4. Conda環境の段階的構築
 
@@ -84,10 +111,28 @@ RUN echo "==> Removing all existing conda environments..." && \
 
 # (ステップ1) CPU用の共通環境を構築 (environments/*.yml)
 COPY environments /app/environments
-RUN find /app/environments -name "*.yml" -print0 | xargs -0 -I {} bash -c \
-    'echo "Creating/updating env from {}" && conda env update --file {} --prune'
+RUN set -e; \
+    find /app/environments -name "*.yml" -print0 | xargs -0 -I {} bash -c '\
+      echo "Creating/updating env from {}"; \
+      for i in 1 2 3 4 5; do \
+        conda env update --file {} --prune && exit 0 || { \
+          echo "[WARN] conda env update failed for {} (try $i/5). Backing off..."; \
+          sleep $((i*20)); \
+        }; \
+      done; \
+      echo "[ERROR] conda env update failed for {} after retries." >&2; \
+      exit 1'
 
-RUN conda run -n scraping_env python -m playwright install --with-deps chromium
+RUN set -e; \
+    SUCCESS=0; \
+    for i in 1 2 3 4 5; do \
+      if conda run -n scraping_env python -m playwright install --with-deps chromium; then \
+        SUCCESS=1; break; \
+      else \
+        echo "[WARN] Playwright install failed (try $i/5). Retrying..."; sleep $((i*15)); \
+      fi; \
+    done; \
+    if [ "$SUCCESS" -ne 1 ]; then echo "[ERROR] Playwright install failed after retries"; exit 1; fi
 
 # (ステップ2) GPUが有効な場合のみ、GPU用の環境で上書き更新 (environments_gpu/*.yml)
 ARG GPU_ENABLED=false
@@ -101,11 +146,16 @@ RUN if [ "${GPU_ENABLED}" = "true" ]; then \
         \
         for ENV_FILE in $(find /app/environments_gpu -name "*.yml"); do \
             echo "--> Attempting to create/update Conda environment from ${ENV_FILE}"; \
-            conda env update --file "${ENV_FILE}" --prune || { \
-                echo "ERROR: Failed to create/update Conda environment from ${ENV_FILE}"; \
-                echo "Please check the contents of ${ENV_FILE} and ensure dependencies are resolvable."; \
-                exit 1; \
-            }; \
+            ATTEMPT=1; \
+            until conda env update --file "${ENV_FILE}" --prune; do \
+                if [ $ATTEMPT -ge 5 ]; then \
+                    echo "ERROR: Failed to create/update Conda environment from ${ENV_FILE} after ${ATTEMPT} attempts"; \
+                    exit 1; \
+                fi; \
+                echo "[WARN] conda env update failed for ${ENV_FILE} (attempt ${ATTEMPT}). Retrying after backoff..."; \
+                sleep $((ATTEMPT*20)); \
+                ATTEMPT=$((ATTEMPT+1)); \
+            done; \
             echo "--> Successfully processed ${ENV_FILE}"; \
         done; \
         \
@@ -117,11 +167,29 @@ RUN if [ "${GPU_ENABLED}" = "true" ]; then \
         MAJOR_VER="${PYTORCH_CUDA_VERSION%%.*}"; \
         if [ "${MAJOR_VER}" = "12" ] || [ "${MAJOR_VER}" = "13" ]; then \
           echo "==> Installing jax[${JAX_CUDA_EXTRA}] for CUDA ${PYTORCH_CUDA_VERSION} (aimodel_env)"; \
-          conda run -n aimodel_env python -V && \
-          conda run -n aimodel_env pip install -U "jax[${JAX_CUDA_EXTRA}]"; \
+          conda run -n aimodel_env python -V; \
+          SUCCESS=0; \
+          for i in 1 2 3 4 5; do \
+            if conda run -n aimodel_env pip install --upgrade --retries 5 --timeout 120 "jax[${JAX_CUDA_EXTRA}]"; then \
+              SUCCESS=1; break; \
+            else \
+              echo "[WARN] pip install jax[${JAX_CUDA_EXTRA}] failed (try $i/5). Retrying..."; \
+              sleep $((i*15)); \
+            fi; \
+          done; \
+          if [ "$SUCCESS" -ne 1 ]; then echo "[ERROR] pip install jax[${JAX_CUDA_EXTRA}] failed after retries"; exit 1; fi; \
         else \
-          echo "WARN: Unsupported CUDA version ${PYTORCH_CUDA_VERSION}; fallback to jax[cuda12]" && \
-          conda run -n aimodel_env pip install -U "jax[cuda12]"; \
+          echo "WARN: Unsupported CUDA version ${PYTORCH_CUDA_VERSION}; fallback to jax[cuda12]"; \
+          SUCCESS=0; \
+          for i in 1 2 3 4 5; do \
+            if conda run -n aimodel_env pip install --upgrade --retries 5 --timeout 120 "jax[cuda12]"; then \
+              SUCCESS=1; break; \
+            else \
+              echo "[WARN] pip install jax[cuda12] failed (try $i/5). Retrying..."; \
+              sleep $((i*15)); \
+            fi; \
+          done; \
+          if [ "$SUCCESS" -ne 1 ]; then echo "[ERROR] pip install jax[cuda12] failed after retries"; exit 1; fi; \
         fi; \
         \
         echo "==> Cleaning up Conda cache" && \

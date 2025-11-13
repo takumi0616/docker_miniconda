@@ -22,6 +22,8 @@ git clone git@github.com:takumi0616/AWCGS.git
 git clone git@github.com:takumi0616/CompresionRain.git
 
 git clone git@github.com:takumi0616/TyphoonForecast.git
+
+git clone git@github.com:takumi0616/3D_avatars.git
 ```
 
 - リポジトリまとめて fetch
@@ -169,7 +171,7 @@ sudo chown -R devel:devel /home/devel/work_takasuka/docker_miniconda/src
 - ディレクトリ所有者を takumi に再帰変更
 
 ```bash
-sudo chown -R takumi:takumi /home/takumi/docker_miniconda/src
+sudo chown -R takumi0616:takumi0616 /home/takumi/docker_miniconda/src
 ```
 
 # Git 設定
@@ -186,7 +188,7 @@ git config --local user.name "takumi0616"
 git config --local user.email "takumi0616.mrt@gmail.com"
 ```
 
-# データ移行
+# データ移行(サーバー内におけるデータ移動)
 
 - データ同期（SSD→HDD）rsync
 
