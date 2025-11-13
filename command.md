@@ -64,11 +64,11 @@ PYTORCH_CUDA_VERSION=12.4 sudo docker compose -f compose.yml -f compose.gpu.yml 
 export CUDA_BASE_IMAGE="nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04" && export PYTORCH_CUDA_VERSION=12.1 && sudo -E docker compose -f compose.yml -f compose.gpu.yml build --no-cache && sudo -E docker compose -f compose.yml -f compose.gpu.yml up -d
 ```
 
-- gpu02 (CUDA 12.8)
+<!-- - gpu02 (CUDA 12.8)
 
 ```bash
 export CUDA_BASE_IMAGE="nvidia/cuda:12.8.0-cudnn-devel-ubuntu22.04" && export PYTORCH_CUDA_VERSION=12.8 && sudo -E docker compose -f compose.yml -f compose.gpu.yml build --no-cache && sudo -E docker compose -f compose.yml -f compose.gpu.yml up -d
-```
+``` -->
 
 - gpu02 の GPU 解放
 
@@ -78,11 +78,11 @@ pip uninstall torch torchvision torchaudio
 pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
 ```
 
-- tml-01-h100 (CUDA 13.0)
+<!-- - tml-01-h100 (CUDA 13.0)
 
 ```bash
 CUDA_BASE_IMAGE="nvidia/cuda:13.0.0-cudnn-devel-ubuntu22.04" PYTORCH_CUDA_VERSION=13.0 sudo docker compose -f compose.yml -f compose.gpu.yml build
-```
+``` -->
 
 ## GPU 起動
 
