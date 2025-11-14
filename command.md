@@ -71,6 +71,8 @@ pip uninstall torch torchvision torchaudio
 
 pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
 
+conda install -c conda-forge libstdc++-ng
+
 find /opt/conda/envs/swinunet_env/ -name "libstdc++.so.6*"
 
 export LD_PRELOAD=/opt/conda/envs/swinunet_env/lib/libstdc++.so.6.0.30
@@ -169,7 +171,7 @@ sudo chown -R devel:devel /home/devel/work_takasuka/docker_miniconda/src
 - ディレクトリ所有者を takumi に再帰変更
 
 ```bash
-sudo chown -R takumi0616:takumi0616 /home/takumi/docker_miniconda/src
+sudo chown -R takumi0616:takumi0616 /home/takumi0616/docker_miniconda/src
 ```
 
 # Git 設定
