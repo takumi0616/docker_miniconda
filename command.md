@@ -52,7 +52,7 @@ sudo docker compose up -d
 
 ## GPU 用
 
-- wsl-ubuntu, via-tml2 (CUDA 12.4 - デフォルト)
+- wsl-ubuntu, via-tml2 (CUDA 12.4 - デフォルト), gpu02 (CUDA 12.8)
 
 ```bash
 PYTORCH_CUDA_VERSION=12.4 sudo docker compose -f compose.yml -f compose.gpu.yml build
@@ -64,18 +64,16 @@ PYTORCH_CUDA_VERSION=12.4 sudo docker compose -f compose.yml -f compose.gpu.yml 
 export CUDA_BASE_IMAGE="nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04" && export PYTORCH_CUDA_VERSION=12.1 && sudo -E docker compose -f compose.yml -f compose.gpu.yml build --no-cache && sudo -E docker compose -f compose.yml -f compose.gpu.yml up -d
 ```
 
-<!-- - gpu02 (CUDA 12.8)
-
-```bash
-export CUDA_BASE_IMAGE="nvidia/cuda:12.8.0-cudnn-devel-ubuntu22.04" && export PYTORCH_CUDA_VERSION=12.8 && sudo -E docker compose -f compose.yml -f compose.gpu.yml build --no-cache && sudo -E docker compose -f compose.yml -f compose.gpu.yml up -d
-``` -->
-
 - gpu02 の GPU 解放
 
 ```bash
 pip uninstall torch torchvision torchaudio
 
 pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
+
+find /opt/conda/envs/swinunet_env/ -name "libstdc++.so.6*"
+
+export LD_PRELOAD=/opt/conda/envs/swinunet_env/lib/libstdc++.so.6.0.30
 ```
 
 <!-- - tml-01-h100 (CUDA 13.0)
