@@ -203,18 +203,20 @@ RUN if [ "${GPU_ENABLED}" = "true" ]; then \
         conda clean -a -y; \
     fi
 
-# Ensure modern libstdc++ (CXXABI >= 1.3.15) inside swinunet_env to satisfy matplotlib and others
-RUN set -e; \
-    SUCCESS=0; \
-    for i in 1 2 3 4 5; do \
-      if conda install -n swinunet_env -y -c conda-forge "libstdcxx-ng>=14" "libgcc-ng>=14"; then \
-        SUCCESS=1; break; \
-      else \
-        echo "[WARN] conda install libstdcxx-ng/libgcc-ng failed (try $i/5). Retrying..."; \
-        sleep $((i*20)); \
-      fi; \
-    done; \
-    if [ "$SUCCESS" -ne 1 ]; then echo "[ERROR] Failed to install modern libstdc++ into swinunet_env"; exit 1; fi
+# Ensure modern libstdc++ (CXXABI >= 1.3.15) inside swinunet_env to satisfy matplotlib and others (GPU builds only)
+RUN if [ "${GPU_ENABLED}" = "true" ]; then \
+      set -e; \
+      SUCCESS=0; \
+      for i in 1 2 3 4 5; do \
+        if conda install -n swinunet_env -y -c conda-forge "libstdcxx-ng>=14" "libgcc-ng>=14"; then \
+          SUCCESS=1; break; \
+        else \
+          echo "[WARN] conda install libstdcxx-ng/libgcc-ng failed (try $i/5). Retrying..."; \
+          sleep $((i*20)); \
+        fi; \
+      done; \
+      if [ "$SUCCESS" -ne 1 ]; then echo "[ERROR] Failed to install modern libstdc++ into swinunet_env"; exit 1; fi; \
+    fi
 
 # Condaをbashで使えるように初期化
 RUN conda init bash
