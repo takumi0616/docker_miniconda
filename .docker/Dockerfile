@@ -93,6 +93,13 @@ RUN set -eux; \
 
 # PATH環境変数の設定
 ENV PATH=$CONDA_DIR/bin:$PATH
+# Prefer conda env libraries first; avoid relying on LD_PRELOAD
+ENV CONDA_DEFAULT_ENV=swinunet_env
+ENV CONDA_PREFIX=$CONDA_DIR/envs/swinunet_env
+ENV LD_LIBRARY_PATH=$CONDA_PREFIX/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:$LD_LIBRARY_PATH
+# Headless-safe matplotlib backend and avoid user-site contamination
+ENV MPLBACKEND=Agg
+ENV PYTHONNOUSERSITE=1
 
 # Condaの初期設定
 RUN conda config --set auto_activate_base false && \
@@ -195,6 +202,19 @@ RUN if [ "${GPU_ENABLED}" = "true" ]; then \
         echo "==> Cleaning up Conda cache" && \
         conda clean -a -y; \
     fi
+
+# Ensure modern libstdc++ (CXXABI >= 1.3.15) inside swinunet_env to satisfy matplotlib and others
+RUN set -e; \
+    SUCCESS=0; \
+    for i in 1 2 3 4 5; do \
+      if conda install -n swinunet_env -y -c conda-forge "libstdcxx-ng>=14" "libgcc-ng>=14"; then \
+        SUCCESS=1; break; \
+      else \
+        echo "[WARN] conda install libstdcxx-ng/libgcc-ng failed (try $i/5). Retrying..."; \
+        sleep $((i*20)); \
+      fi; \
+    done; \
+    if [ "$SUCCESS" -ne 1 ]; then echo "[ERROR] Failed to install modern libstdc++ into swinunet_env"; exit 1; fi
 
 # Condaをbashで使えるように初期化
 RUN conda init bash

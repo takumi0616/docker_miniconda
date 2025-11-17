@@ -70,12 +70,6 @@ export CUDA_BASE_IMAGE="nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04" && export P
 pip uninstall torch torchvision torchaudio
 
 pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
-
-conda install -c conda-forge libstdc++-ng
-
-find /opt/conda/envs/swinunet_env/ -name "libstdc++.so.6*"
-
-export LD_PRELOAD=/opt/conda/envs/swinunet_env/lib/libstdc++.so.6.0.30
 ```
 
 <!-- - tml-01-h100 (CUDA 13.0)
