@@ -69,7 +69,7 @@ export CUDA_BASE_IMAGE="nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04" && export P
 ```bash
 pip uninstall torch torchvision torchaudio
 
-pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
+pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu130
 ```
 
 <!-- - tml-01-h100 (CUDA 13.0)
