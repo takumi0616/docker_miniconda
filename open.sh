@@ -4,7 +4,7 @@ echo "Cycling through all project files..."
 
 # プロジェクトディレクトリのリスト
 projects=(
-    "AWCGS"
+    "Weather-CAST"
     "CompresionRain"
     "FrontLine"
     "PressurePattern"
