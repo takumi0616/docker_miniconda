@@ -170,34 +170,67 @@ RUN if [ "${GPU_ENABLED}" = "true" ]; then \
         # JAX の pip パッケージは v0.6 系で cuda12 プラグインが提供されており、
         # CUDA 12.x 系および 13.x でも 'cuda12' を使うのが現状の安定解です。
         # （NVIDIA ドライバが新しければ後方互換で動作）                          \
-        JAX_CUDA_EXTRA="cuda12"; \
-        MAJOR_VER="${PYTORCH_CUDA_VERSION%%.*}"; \
-        if [ "${MAJOR_VER}" = "12" ] || [ "${MAJOR_VER}" = "13" ]; then \
-          echo "==> Installing jax[${JAX_CUDA_EXTRA}] for CUDA ${PYTORCH_CUDA_VERSION} (aimodel_env)"; \
-          conda run -n aimodel_env python -V; \
-          SUCCESS=0; \
-          for i in 1 2 3 4 5; do \
-            if conda run -n aimodel_env pip install --upgrade --retries 5 --timeout 120 "jax[${JAX_CUDA_EXTRA}]"; then \
-              SUCCESS=1; break; \
-            else \
-              echo "[WARN] pip install jax[${JAX_CUDA_EXTRA}] failed (try $i/5). Retrying..."; \
-              sleep $((i*15)); \
-            fi; \
-          done; \
-          if [ "$SUCCESS" -ne 1 ]; then echo "[ERROR] pip install jax[${JAX_CUDA_EXTRA}] failed after retries"; exit 1; fi; \
-        else \
-          echo "WARN: Unsupported CUDA version ${PYTORCH_CUDA_VERSION}; fallback to jax[cuda12]"; \
-          SUCCESS=0; \
-          for i in 1 2 3 4 5; do \
-            if conda run -n aimodel_env pip install --upgrade --retries 5 --timeout 120 "jax[cuda12]"; then \
-              SUCCESS=1; break; \
-            else \
-              echo "[WARN] pip install jax[cuda12] failed (try $i/5). Retrying..."; \
-              sleep $((i*15)); \
-            fi; \
-          done; \
-          if [ "$SUCCESS" -ne 1 ]; then echo "[ERROR] pip install jax[cuda12] failed after retries"; exit 1; fi; \
-        fi; \
+# --- Install JAX CUDA plugin into aimodel_env ---
+        # JAX 0.6.x 以降は [cuda12] オプションを使用 (cuda12_pip は廃止)
+        echo "==> Installing JAX with CUDA support into aimodel_env"; \
+        SUCCESS=0; \
+        for i in 1 2 3 4 5; do \
+           # --force-reinstall で既存のCPU版などを確実に上書き
+           if conda run -n aimodel_env pip install --upgrade --force-reinstall --retries 5 --timeout 120 "jax[cuda12]"; then \
+             SUCCESS=1; break; \
+           else \
+             echo "[WARN] pip install jax[cuda12] failed (try $i/5). Retrying..."; \
+             sleep $((i*15)); \
+           fi; \
+        done; \
+        if [ "$SUCCESS" -ne 1 ]; then echo "[ERROR] pip install jax failed"; exit 1; fi; \
+        \
+        # =====================================================================
+        # 【重要】JAX用 LD_LIBRARY_PATH 自動設定スクリプトの作成
+        # Conda環境 activate 時に、pip で入れた nvidia-* ライブラリへのパスを自動で通す
+        # シェルのエスケープ問題を避けるため、Pythonスクリプト経由で生成する
+        # =====================================================================
+        ACTIVATE_DIR="$CONDA_DIR/envs/aimodel_env/etc/conda/activate.d"; \
+        DEACTIVATE_DIR="$CONDA_DIR/envs/aimodel_env/etc/conda/deactivate.d"; \
+        mkdir -p "$ACTIVATE_DIR" "$DEACTIVATE_DIR"; \
+        \
+        # 生成用の一時Pythonスクリプトを作成
+        printf "import os\n\
+import site\n\
+import glob\n\
+\n\
+try:\n\
+    base = site.getsitepackages()[0]\n\
+    nvidia_dir = os.path.join(base, 'nvidia')\n\
+    lib_paths = []\n\
+    # nvidiaディレクトリ以下のすべての lib ディレクトリを探索\n\
+    if os.path.exists(nvidia_dir):\n\
+        for root, dirs, files in os.walk(nvidia_dir):\n\
+            if 'lib' in dirs:\n\
+                lib_paths.append(os.path.join(root, 'lib'))\n\
+    \n\
+    # 重複を排除してコロンで結合\n\
+    libs_str = ':'.join(sorted(list(set(lib_paths))))\n\
+    \n\
+    if libs_str:\n\
+        print(f'export OLD_LD_LIBRARY_PATH=\${{LD_LIBRARY_PATH}}')\n\
+        print(f'export LD_LIBRARY_PATH={libs_str}:\${{LD_LIBRARY_PATH}}')\n\
+except Exception as e:\n\
+    pass\n" > /tmp/gen_jax_env.py; \
+        \
+        # Pythonを実行して activate.d/env_vars.sh に書き込む
+        echo "#!/bin/sh" > "$ACTIVATE_DIR/env_vars.sh"; \
+        conda run -n aimodel_env python /tmp/gen_jax_env.py >> "$ACTIVATE_DIR/env_vars.sh"; \
+        rm /tmp/gen_jax_env.py; \
+        \
+        # deactivate 用のスクリプト（元に戻す設定）
+        echo "#!/bin/sh" > "$DEACTIVATE_DIR/env_vars.sh"; \
+        echo 'export LD_LIBRARY_PATH=$OLD_LD_LIBRARY_PATH' >> "$DEACTIVATE_DIR/env_vars.sh"; \
+        echo 'unset OLD_LD_LIBRARY_PATH' >> "$DEACTIVATE_DIR/env_vars.sh"; \
+        \
+        # --- 検証: 生成されたファイルの中身をログに出す --- \
+        echo "==> Generated activate script content:"; \
+        cat "$ACTIVATE_DIR/env_vars.sh"; \
         \
         echo "==> Cleaning up Conda cache" && \
         conda clean -a -y; \
