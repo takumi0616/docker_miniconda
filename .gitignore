@@ -42,3 +42,5 @@ src/3D_avatars
 !src/ntfy_notify.py
 
 .env
+
+task_command.md
