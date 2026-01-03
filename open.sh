@@ -11,6 +11,9 @@ projects=(
     "TyphoonForecast"
     "WeatherLLM"
     "3D_avatars"
+    "colpali"
+    "Scraping"
+    "work_research"
 )
 
 # 各プロジェクトの主要ファイルを開く
