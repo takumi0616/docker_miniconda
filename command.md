@@ -170,6 +170,12 @@ sudo chown -R takumi0616:takumi0616 /home/takumi0616/docker_miniconda/src
 
 # Git 設定
 
+- git接続確認
+
+```bash
+ssh -T git@github.com
+```
+
 - Git ローカルユーザー名を設定
 
 ```bash

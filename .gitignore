@@ -35,6 +35,7 @@ src/TyphoonForecast
 src/Weather-CAST
 src/3D_avatars
 src/colpali
+src/PersonalCast
 
 # But do NOT ignore (re-include) check_gpu_torch.py
 !src/check_gpu_torch.py
