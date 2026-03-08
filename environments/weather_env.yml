@@ -12,6 +12,7 @@ dependencies:
   - pandas
   - scikit-learn
   - xarray
+  - cfgrib
   - netcdf4
   - dask
   - psutil
