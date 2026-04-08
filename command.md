@@ -148,6 +148,8 @@ sudo chown -R $USER:$USER /home/takumi/docker_miniconda/src/FrontLine/
 
 ```bash
 sudo chown -R s233319:s233319 /home/s233319/docker_miniconda/src
+
+docker run --rm -v /home/s233319/docker_miniconda/src:/target alpine chown -R $(id -u):$(id -g) /target
 ```
 
 - ディレクトリ所有者を devel に再帰変更
@@ -179,13 +181,13 @@ ssh -T git@github.com
 - Git ローカルユーザー名を設定
 
 ```bash
-git config --local user.name "takumi0616"
+git config --global user.name "takumi0616"
 ```
 
 - Git ローカルメールアドレスを設定
 
 ```bash
-git config --local user.email "takumi0616.mrt@gmail.com"
+git config --global user.email "takumi0616.mrt@gmail.com"
 ```
 
 # データ移行(サーバー内におけるデータ移動)
@@ -194,4 +196,10 @@ git config --local user.email "takumi0616.mrt@gmail.com"
 
 ```bash
 sudo rsync -avP /home/devel/work_takasuka_git/docker_miniconda/src/anemoi/ /mnt/gpu01C/devel/work_takasuka_git/docker_miniconda/src/anemoi/
+```
+
+# 容量確認
+
+```bash
+du -h --max-depth=1 /home/takumi0616/docker_miniconda/src | sort -rh
 ```
