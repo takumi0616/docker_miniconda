@@ -15,6 +15,9 @@
 #
 # ▼ tml-01-h100 (CUDA 13.0)
 # CUDA_BASE_IMAGE="nvidia/cuda:13.0.0-cudnn-devel-ubuntu22.04" PYTORCH_CUDA_VERSION=13.0 sudo docker compose -f compose.yml -f compose.gpu.yml build
+# --- 注意点 ---
+# pip uninstall torch torchvision torchaudio
+# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
 #
 # 起動コマンドは `build` を `up -d` に置き換えてください。
 # 例: CUDA_BASE_IMAGE="..." PYTORCH_CUDA_VERSION=... sudo docker compose -f compose.yml -f compose.gpu.yml up -d
