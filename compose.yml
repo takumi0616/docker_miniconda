@@ -31,6 +31,10 @@ services:
       - ./.cdsapirc:/root/.cdsapirc:ro
       # gpu01で共有メモリ不足になったら
       - /dev/shm:/dev/shm # ホストの共有メモリを直接マウント
+      # 学習データ（ERA5/前線GT/NPY）。ホストとコンテナで同一パスを保ち、
+      # main_v7.py / main_v7_preprocess_data.py の --data-dir に
+      # 同じ絶対パス（/data/datasets/255_255）を渡せるようにする。
+      - /data/datasets/255_255:/data/datasets/255_255
 
 
     # platform: 'linux/amd64' # Apple Silicon Macでx86イメージを強制したい場合のみコメント解除
