@@ -1,0 +1,26 @@
+# /etc/systemd/system/nvidia-power.service
+#
+# GPU の Persistence Mode と Power Limit を起動時に永続化する systemd ユニット。
+# nvidia-smi -pm / -pl は再起動で揮発するため、この unit でブート毎に再設定する。
+#
+# インストール:
+#   sudo cp scripts/nvidia-power.service /etc/systemd/system/nvidia-power.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now nvidia-power.service
+#   nvidia-smi --query-gpu=persistence_mode,power.limit --format=csv
+#
+# 期待値: Enabled, 180.00 W
+
+[Unit]
+Description=Set NVIDIA GPU persistence mode and power limit
+After=nvidia-persistenced.service
+Wants=nvidia-persistenced.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/nvidia-smi -pm 1
+ExecStart=/usr/bin/nvidia-smi -pl 180
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -1,17 +1,12 @@
 name: llm_env
+# PyTorch は cu128 (Blackwell sm_120 native) を pip で導入。
+# conda の pytorch-cuda メタパッケージは 12.4 までしか無いため。
 channels:
-  - pytorch
-  - nvidia
   - conda-forge
   - defaults
 dependencies:
   - python=3.11
-  # PyTorch + CUDA
-  - pytorch
-  - torchvision
-  - torchaudio
-  - pytorch-cuda=12.4
-  # Common scientific stack
+  # Common scientific stack (PyTorch 抜き)
   - numpy
   - pandas
   - scipy
@@ -39,6 +34,12 @@ dependencies:
   - psutil
   - pip
   - pip:
+      # PyTorch (Blackwell sm_120 native)
+      - --extra-index-url=https://download.pytorch.org/whl/cu128
+      - torch
+      - torchvision
+      - torchaudio
+      # 既存の pip 依存
       - PyPDF2
       - pdfminer.six
       - pymupdf

@@ -1,12 +1,14 @@
 name: pytorch_env
+# PyTorch は cu128 (Blackwell sm_120 native) を pip で導入。
+# conda の pytorch-cuda メタパッケージは 12.4 までしか無いため。
 channels:
-  - pytorch
-  - nvidia
   - conda-forge
   - defaults
 dependencies:
   - python=3.11
-  - pytorch-cuda=12.4
-  - pytorch
-  - torchvision
-  - torchaudio
+  - pip
+  - pip:
+      - --extra-index-url=https://download.pytorch.org/whl/cu128
+      - torch
+      - torchvision
+      - torchaudio

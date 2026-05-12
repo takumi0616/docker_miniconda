@@ -1,15 +1,13 @@
 name: swinunet_env
+# PyTorch は conda の pytorch-cuda メタパッケージが 12.4 までしか無いため、
+# Blackwell sm_120 ネイティブ対応 (cu128 wheel / PyTorch 2.7+) を確実にする目的で
+# pip 経由でインストールする。conda 側では PyTorch を入れない。
 channels:
-  - pytorch
-  - nvidia
   - conda-forge
   - defaults
 dependencies:
-  - python
-  - pytorch-cuda=12.4
-  - pytorch
-  - torchvision
-  - torchaudio
+  - python=3.12
+  # 科学計算スタック (PyTorch 抜き)
   - numpy
   - pandas
   - scikit-learn
@@ -34,6 +32,12 @@ dependencies:
   - pygrib
   - pip
   - pip:
+      # PyTorch (Blackwell sm_120 native: cu128 wheel)
+      - --extra-index-url=https://download.pytorch.org/whl/cu128
+      - torch
+      - torchvision
+      - torchaudio
+      # 既存の pip 依存
       - japanize-matplotlib
       - cdsapi
       - skan
